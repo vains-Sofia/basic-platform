@@ -69,6 +69,18 @@
             <artifactId>mybatis-plus-jsqlparser</artifactId>
         </dependency>
 
+        <!-- Mybatis Plus 代码生成器 -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-generator</artifactId>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.freemarker/freemarker -->
+        <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+        </dependency>
+
         <!-- Spring Doc 在线文档 -->
         <dependency>
             <groupId>org.springdoc</groupId>
@@ -115,6 +127,19 @@
                 </configuration>
             </plugin>
         </plugins>
+
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
     </build>
 
     <dependencyManagement>

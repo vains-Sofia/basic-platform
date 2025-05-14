@@ -10,12 +10,14 @@ import com.basic.handler.mybatis.MybatisBasicEnumTypeHandler;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * MybatisPlus配置类
  *
  * @author vains
  */
+@EnableTransactionManagement
 @MapperScan("com.basic.mapper")
 @Configuration(proxyBeanMethods = false)
 public class MybatisPlusConfiguration {

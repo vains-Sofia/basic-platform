@@ -15,3 +15,13 @@ springdoc:
 
 server:
   port: 9998
+
+# Mybatis Plus相关配置
+mybatis-plus:
+  # mapper文件位置
+  mapper-locations: classpath*:/mapper/**/*.xml,classpath:com/basic/mapper/xml/*.xml
+
+logging:
+  level:
+    # 打印SQL
+    com.basic.mapper: debug
