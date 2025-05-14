@@ -1,4 +1,5 @@
 # 分层构建镜像
+FROM registry.cn-guangzhou.aliyuncs.com/vains/eclipse-temurin:21-jre AS builder
 WORKDIR application
 COPY . .
 ARG JAR_FILE=target/*.jar
