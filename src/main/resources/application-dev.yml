@@ -14,4 +14,4 @@ springdoc:
   show-login-endpoint: true
 
 server:
-  port: 9999
+  port: 9998
