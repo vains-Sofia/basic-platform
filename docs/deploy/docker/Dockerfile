@@ -10,10 +10,10 @@ RUN java -Djarmode=tools -jar application.jar extract --layers --destination ext
 FROM registry.cn-guangzhou.aliyuncs.com/vains/eclipse-temurin:21-jre
 WORKDIR application
 # /builder/extracted/../ ./
-COPY --from=builder /builder/extracted/dependencies/ ./
-COPY --from=builder /builder/extracted/spring-boot-loader/ ./
-COPY --from=builder /builder/extracted/snapshot-dependencies/ ./
-COPY --from=builder /builder/extracted/application/ ./
+COPY --from=builder extracted/dependencies/ ./
+COPY --from=builder extracted/spring-boot-loader/ ./
+COPY --from=builder extracted/snapshot-dependencies/ ./
+COPY --from=builder extracted/application/ ./
 
 # 设置时区
 ENV TZ=Asia/Shanghai
