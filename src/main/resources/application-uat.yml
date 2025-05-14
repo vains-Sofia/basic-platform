@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST:127.0.0.1}:${DB_PORT:3306}/basic-platform?serverTimezone=Asia/Shanghai&userUnicode=true&characterEncoding=utf-8
+    username: root
+    password: root
+
+  data:
+    redis:
+      host: ${REDIS_HOST:127.0.0.1}
+
+springdoc:
+  show-login-endpoint: true
+server:
+  port: 10000

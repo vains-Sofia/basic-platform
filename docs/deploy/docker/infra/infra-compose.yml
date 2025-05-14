@@ -1,0 +1,74 @@
+version: '3.8'
+
+# 初始化组件/环境
+# docker-compose -f infra-compose.yml up -d
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user123
+    ports:
+      - "3306:3306"
+    volumes:
+      - /opt/docker/mysql/conf/my.cnf:/etc/mysql/my.cnf
+      - /opt/docker/mysql/logs:/logs
+      - /opt/docker/mysql/data:/var/lib/mysql
+
+  redis:
+    image: redis:7.0
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - /opt/docker/redis/data:/data
+
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    restart: always
+    ports:
+      - "9000:9000"   # API
+      - "9001:9001"   # 控制台
+    environment:
+      # 账号密码
+      MINIO_ROOT_USER: minio_admin
+      MINIO_ROOT_PASSWORD: minio123
+      # 控制台访问地址
+      MINIO_BROWSER_REDIRECT_URL: https://minio.cloudflow.top/ui
+    command: server /data --console-address ":9001"
+    volumes:
+      - /opt/docker/minio/data:/data
+  nacos:
+    image: nacos/nacos-server:latest
+    container_name: nacos
+    restart: always
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+      - "9849:9849"
+    environment:
+      - MODE=standalone  # 单节点模式
+      - SPRING_PROFILES_ACTIVE=test  # 配置文件环境（根据需要修改）
+      - NACOS_SERVERS=nacos  # 服务发现模式下，若是集群需要设置其他服务器列表
+      - PERSISTENCE=true  # 是否启用数据库持久化（默认为 false）
+      - MYSQL_HOST=mysql  # MySQL连接的主机名（如果使用 MySQL 持久化）
+      - MYSQL_PORT=3306  # MySQL端口
+      - MYSQL_USER=user  # MySQL用户
+      - MYSQL_PASSWORD=user123  # MySQL密码
+      - MYSQL_DATABASE=nacos_config  # MySQL数据库
+    depends_on:
+      - mysql
+    volumes:
+      - /opt/docker/nacos/data:/home/nacos/data  # 持久化存储
+
+volumes:
+  mysql_data:
+  redis_data:
+  minio_data:
+  nacos_data:

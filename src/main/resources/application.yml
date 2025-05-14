@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: basic-platform
+  profiles:
+    active: dev
