@@ -8,6 +8,7 @@ spring:
   data:
     redis:
       host: ${REDIS_HOST:127.0.0.1}
+      database: 6
 
 springdoc:
   show-login-endpoint: true

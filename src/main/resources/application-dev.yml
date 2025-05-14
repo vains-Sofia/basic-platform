@@ -8,6 +8,7 @@ spring:
   data:
     redis:
       host: ${REDIS_HOST:127.0.0.1}
+      database: 5
 
 springdoc:
     # 是否显示登录接口
