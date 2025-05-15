@@ -14,13 +14,10 @@ springdoc:
   show-login-endpoint: true
 server:
   port: 10000
+  # 使用底层容器的转发头策略
+  forward-headers-strategy: native
 
 # Mybatis Plus相关配置
 mybatis-plus:
   # mapper文件位置
   mapper-locations: classpath*:/mapper/**/*.xml,classpath:com/basic/mapper/xml/*.xml
-
-logging:
-  level:
-    # 打印SQL
-    com.basic.mapper: debug
