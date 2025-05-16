@@ -19,6 +19,8 @@
         <skipTests>true</skipTests>
         <!-- 指定Java版本 -->
         <java.version>21</java.version>
+        <!-- Redisson 版本号 -->
+        <redisson.version>3.45.1</redisson.version>
         <!-- Spring Doc 版本号 -->
         <spring-doc.version>2.8.6</spring-doc.version>
         <!-- Mybatis Plus 版本号 -->
@@ -86,6 +88,20 @@
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>${spring-doc.version}</version>
+        </dependency>
+
+        <!-- 分布式锁Redisson实现 -->
+        <!-- https://mvnrepository.com/artifact/org.redisson/redisson-spring-boot-starter -->
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson-spring-boot-starter</artifactId>
+            <version>${redisson.version}</version>
+        </dependency>
+
+        <!-- Aop AspectJ依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
 
         <dependency>

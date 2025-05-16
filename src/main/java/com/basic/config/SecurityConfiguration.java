@@ -79,6 +79,7 @@ public class SecurityConfiguration {
         http.authorizeHttpRequests(authorize -> authorize
                 // 忽略指定url的认证、鉴权
                 .requestMatchers("/test/**").permitAll()
+                .requestMatchers("/redis/lock/**").permitAll()
                 // 放行预检请求
                 .requestMatchers(HttpMethod.OPTIONS).permitAll()
                 .requestMatchers(AuthorizeConstants.DEFAULT_IGNORE_PATHS.toArray(new String[0])).permitAll()
