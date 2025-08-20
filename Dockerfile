@@ -22,9 +22,6 @@ COPY --from=builder /builder/extracted/application/ ./
 ENV TZ=Asia/Shanghai
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-# 环境变量（默认留空，部署时传入）
-ENV JAVA_TOOL_OPTIONS=""
-
 ARG BUILD_PROJECT=unknown
 ARG BUILD_VERSION=0.0.1
 ARG BUILD_COMMIT=unknown
