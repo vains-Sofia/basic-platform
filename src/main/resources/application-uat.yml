@@ -8,6 +8,9 @@ spring:
   data:
     redis:
       url: ${REDIS_URL:redis://127.0.0.1:6379/6}
+      timeout: 5s
+      ssl:
+        enabled: true
 
 springdoc:
   show-login-endpoint: true

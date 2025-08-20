@@ -31,6 +31,12 @@
         </root>
     </springProfile>
 
+    <springProfile name="uat">
+        <root level="info">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+
     <!-- 4.2 生产环境:输出到文档 -->
     <springProfile name="test">
         <!-- 从 Spring Boot 配置文件中，读取 spring.application.name 应用名 -->
