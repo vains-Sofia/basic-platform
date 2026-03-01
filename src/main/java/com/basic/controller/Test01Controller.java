@@ -21,10 +21,11 @@ public class Test01Controller {
 
     @GetMapping("/test01")
     @Operation(summary = "测试接口-01", description = "测试接口-01")
-    public void test01() {
+    public String test01() {
         redisTemplate.opsForValue().set("test", "test");
         String test = redisTemplate.opsForValue().get("test");
         System.out.println(test);
+        return test;
     }
 
 
