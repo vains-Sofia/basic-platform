@@ -13,8 +13,6 @@ springdoc:
   show-login-endpoint: true
 server:
   port: 10000
-  # 使用底层容器的转发头策略
-  forward-headers-strategy: native
 
 # Mybatis Plus相关配置
 mybatis-plus:
