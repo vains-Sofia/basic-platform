@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.concurrent.TimeUnit;
+
 /**
- * redis分布式锁测试接口
+ * Redis 分布式锁测试接口
  *
  * @author vains
  */
@@ -25,6 +27,7 @@ public class RedisLockController {
     @SneakyThrows
     @GetMapping("/test01")
     public Result<Integer> test01() {
+        TimeUnit.MILLISECONDS.sleep(100);
         if (publicResource <= 0) {
             throw new CloudServiceException("已售罄");
         }

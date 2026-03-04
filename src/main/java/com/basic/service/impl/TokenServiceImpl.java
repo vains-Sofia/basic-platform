@@ -63,7 +63,7 @@ public class TokenServiceImpl implements TokenService {
                                                long refreshTokenExpiry) {
 
         // 生成JWT Token并返回
-        String tokenValue = this.generateAccessToken(authentication, AuthorizeConstants.ACCESS_TOKEN_EXPIRY);
+        String tokenValue = this.generateAccessToken(authentication, accessTokenExpiry);
         String refreshToken = UUID.randomUUID().toString();
         // 存入缓存中，30天后过期
         String authorizationKey = AuthorizeConstants.AUTHENTICATION_PREFIX + refreshToken;

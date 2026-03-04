@@ -8,6 +8,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2Error;
@@ -15,6 +16,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.BearerTokenError;
 import org.springframework.security.oauth2.server.resource.BearerTokenErrorCodes;
 import org.springframework.security.oauth2.server.resource.authentication.AbstractOAuth2TokenAuthenticationToken;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
@@ -33,15 +35,17 @@ import java.util.Map;
 public class SecurityUtils {
 
     /**
-     * 获取当前登录用户的id
+     * 获取当前登录用户的 id
      *
      * @return 当前登录用户的id
      */
     public static String getLoginUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Assert.notNull(authentication, "Authentication must not be null");
         // 获取当前认证信息
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Object principal = authentication.getPrincipal();
         if (principal instanceof Jwt jwt) {
-            // 获取当前用户id
+            // 获取当前用户 id
             return jwt.getId();
         }
         return null;

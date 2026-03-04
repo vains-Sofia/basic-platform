@@ -62,7 +62,7 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http,
-                                                          TokenService tokenService) throws Exception {
+                                                          TokenService tokenService) {
         // 禁用 csrf 与 cors
         http.cors(Customizer.withDefaults());
         http.csrf(AbstractHttpConfigurer::disable);
@@ -87,12 +87,12 @@ public class SecurityConfiguration {
         );
         // 资源服务配置，将系统当做一个资源服务
         http.oauth2ResourceServer(oauth2 -> oauth2
-                // 添加未携带token和权限不足异常处理
+                // 添加未携带 token和权限不足异常处理
                 .accessDeniedHandler(SecurityUtils::exceptionHandler)
                 .authenticationEntryPoint(SecurityUtils::exceptionHandler)
                 .jwt(Customizer.withDefaults())
         );
-        // 禁用Session
+        // 禁用 Session
         http.sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         );
@@ -169,10 +169,6 @@ public class SecurityConfiguration {
         ConfigurableJWTProcessor<SecurityContext> jwtProcessor = new DefaultJWTProcessor<>();
         JWSKeySelector<SecurityContext> jwsKeySelector = new JWSVerificationKeySelector<>(jws, jwkSource);
         jwtProcessor.setJWSKeySelector(jwsKeySelector);
-        // Override the default Nimbus claims set verifier as NimbusJwtDecoder handles it
-        // instead
-        jwtProcessor.setJWTClaimsSetVerifier((claims, context) -> {
-        });
         return new NimbusJwtDecoder(jwtProcessor);
     }
 

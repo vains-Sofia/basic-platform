@@ -1,17 +1,16 @@
 package com.basic.config;
 
 import com.basic.util.RedisConfigUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import org.springframework.security.jackson2.CoreJackson2Module;
+import org.springframework.data.redis.serializer.JacksonJsonRedisSerializer;
+import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
- * redis配置
+ * Redis 配置
  *
  * @author vains
  */
@@ -21,20 +20,21 @@ public class RedisConfiguration {
     /**
      * 默认情况下使用
      *
-     * @param connectionFactory redis链接工厂
+     * @param connectionFactory Redis 链接工厂
      * @return RedisTemplate
      */
     @Bean
-    public RedisTemplate<?, ?> redisTemplate(Jackson2ObjectMapperBuilder builder,
-                                                       RedisConnectionFactory connectionFactory) {
-        ObjectMapper objectMapper = RedisConfigUtils.buildRedisObjectMapper(builder);
+    public RedisTemplate<?, ?> redisTemplate(RedisConnectionFactory connectionFactory) {
+        JsonMapper.Builder jsonMapperBuilder = JsonMapper.builderWithJackson2Defaults();
+        // 日期不序列化为 Timestamps
+        jsonMapperBuilder.disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS);
+        jsonMapperBuilder.disable(DateTimeFeature.WRITE_DURATIONS_AS_TIMESTAMPS);
 
-        // 添加Security提供的Jackson Mixin
-        objectMapper.registerModule(new CoreJackson2Module());
+        JsonMapper.Builder builder = RedisConfigUtils.buildRedisObjectMapper(jsonMapperBuilder);
 
-        // 存入redis时序列化值的序列化器
-        Jackson2JsonRedisSerializer<Object> valueSerializer =
-                new Jackson2JsonRedisSerializer<>(objectMapper, Object.class);
+        // 存入 Redis时序列化值的序列化器
+        JacksonJsonRedisSerializer<Object> valueSerializer =
+                new JacksonJsonRedisSerializer<>(builder.build(), Object.class);
 
         return RedisConfigUtils.buildRedisTemplate(connectionFactory, valueSerializer);
     }

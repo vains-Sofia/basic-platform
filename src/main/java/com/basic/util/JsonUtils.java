@@ -1,19 +1,13 @@
 package com.basic.util;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JacksonException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.JavaType;
+import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.type.TypeFactory;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
@@ -30,22 +24,16 @@ import java.text.SimpleDateFormat;
 @UtilityClass
 public class JsonUtils {
 
-    private final static ObjectMapper MAPPER = new ObjectMapper();
+    private final static JsonMapper MAPPER;
 
     static {
-        // 对象的所有字段全部列入，还是其他的选项，可以忽略null等
-        MAPPER.setSerializationInclusion(JsonInclude.Include.ALWAYS);
-        // 取消默认的时间转换为timeStamp格式
-        MAPPER.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        // 设置Date类型的序列化及反序列化格式
-        MAPPER.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
-        // 忽略空Bean转json的错误
-        MAPPER.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        // 忽略未知属性，防止json字符串中存在，java对象中不存在对应属性的情况出现错误
-        MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        // 添加java8序列化支持和新版时间对象序列化支持
-        MAPPER.registerModule(new Jdk8Module());
-        MAPPER.registerModule(new JavaTimeModule());
+        JsonMapper.Builder builder = JsonMapper.builderWithJackson2Defaults();
+        // 设置 Date类型的序列化及反序列化格式
+        builder.defaultDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+        // 日期不序列化为 Timestamps
+        builder.disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS);
+        builder.disable(DateTimeFeature.WRITE_DURATIONS_AS_TIMESTAMPS);
+        MAPPER = builder.build();
     }
 
     /**
@@ -60,12 +48,7 @@ public class JsonUtils {
         if (json == null || clazz == null) {
             return null;
         }
-        try {
-            return MAPPER.readValue(json, clazz);
-        } catch (IOException e) {
-            log.error("json转换失败,原因:", e);
-        }
-        return null;
+        return MAPPER.readValue(json, clazz);
     }
 
     /**
@@ -80,12 +63,7 @@ public class JsonUtils {
         if (json == null || type == null) {
             return null;
         }
-        try {
-            return MAPPER.readValue(json, type);
-        } catch (IOException e) {
-            log.error("json转换失败,原因:", e);
-        }
-        return null;
+        return MAPPER.readValue(json, type);
     }
 
     /**
@@ -99,12 +77,7 @@ public class JsonUtils {
     public static <T> T toObject(String json, Type type) {
         TypeFactory typeFactory = MAPPER.getTypeFactory();
         JavaType javaType = typeFactory.constructType(type);
-        try {
-            return MAPPER.readValue(json, javaType);
-        } catch (JacksonException e) {
-            log.warn("deserialize json: {} to {} error {}", json, javaType, e.getMessage());
-        }
-        return null;
+        return MAPPER.readValue(json, javaType);
     }
 
     /**
@@ -119,12 +92,7 @@ public class JsonUtils {
         if (inputStream == null || clazz == null) {
             return null;
         }
-        try {
-            return MAPPER.readValue(inputStream, clazz);
-        } catch (IOException e) {
-            log.error("json转换失败,原因:", e);
-        }
-        return null;
+        return MAPPER.readValue(inputStream, clazz);
     }
 
     /**
@@ -140,13 +108,8 @@ public class JsonUtils {
         if (json == null || collectionClazz == null || elementsClazz == null) {
             return null;
         }
-        try {
-            JavaType javaType = MAPPER.getTypeFactory().constructParametricType(collectionClazz, elementsClazz);
-            return MAPPER.readValue(json, javaType);
-        } catch (IOException e) {
-            log.error("json转换失败,原因:", e);
-        }
-        return null;
+        JavaType javaType = MAPPER.getTypeFactory().constructParametricType(collectionClazz, elementsClazz);
+        return MAPPER.readValue(json, javaType);
     }
 
     /**
@@ -159,12 +122,7 @@ public class JsonUtils {
         if (o == null) {
             return null;
         }
-        try {
-            return o instanceof String s ? s : MAPPER.writeValueAsString(o);
-        } catch (IOException e) {
-            log.error("json转换失败,原因:", e);
-        }
-        return null;
+        return o instanceof String s ? s : MAPPER.writeValueAsString(o);
     }
 
     /**
@@ -184,11 +142,11 @@ public class JsonUtils {
     }
 
     /**
-     * 获取工具类使用的mapper
+     * 获取工具类使用的 mapper
      *
-     * @return ObjectMapper实例
+     * @return ObjectMapper 实例
      */
-    public static ObjectMapper getMapper() {
+    public static JsonMapper getMapper() {
         return MAPPER;
     }
 
