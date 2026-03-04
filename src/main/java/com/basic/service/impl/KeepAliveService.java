@@ -22,7 +22,7 @@ public class KeepAliveService {
         this.restClient = RestClient.builder().baseUrl("https://basic-platform.onrender.com").build();
     }
 
-    @Scheduled(cron = "0 */15 * * * *")
+    @Scheduled(cron = "0 */5 * * * *")
     public void keepAlive() {
         String body = restClient.get()
                 .uri("/test/test01")
