@@ -60,6 +60,7 @@ public class Test01Controller {
     }
 
     @GetMapping("/dict/types")
+    @PreAuthorize("hasAuthority('dict:type')")
     @Operation(summary = "测试接口-04", description = "测试接口-04")
     public Result<List<SysDictType>> dictTypes() {
 

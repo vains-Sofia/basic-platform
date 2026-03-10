@@ -1,10 +1,8 @@
 package com.basic.domain.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.basic.domain.BasicEntity;
+import com.basic.enums.PermissionTypeEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -52,7 +50,7 @@ public class SysPermission extends BasicEntity {
     /**
      * 0:菜单,1:接口,2:其它
      */
-    private Integer permissionType;
+    private PermissionTypeEnum permissionType;
 
     /**
      * 所属模块名字
@@ -148,7 +146,7 @@ public class SysPermission extends BasicEntity {
     /**
      * 菜单排序
      */
-    private Integer rank;
+    private Integer sortOrder;
 
     /**
      * 指定激活菜单即可获得高亮，`activePath`为指定激活菜单的`path`
