@@ -1,12 +1,15 @@
 package com.basic.filter;
 
 import com.basic.constant.AuthorizeConstants;
+import com.basic.domain.Result;
+import com.basic.util.ServletUtils;
 import jakarta.annotation.Nonnull;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -14,6 +17,12 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+/**
+ * 黑名单拦截器
+ *
+ * @author vains
+ */
+@Slf4j
 @RequiredArgsConstructor
 public class JwtBlacklistFilter extends OncePerRequestFilter {
 
@@ -33,14 +42,22 @@ public class JwtBlacklistFilter extends OncePerRequestFilter {
 
             String token = auth.substring(7);
 
-            Jwt jwt = jwtDecoder.decode(token);
+            try {
+                Jwt jwt = jwtDecoder.decode(token);
 
-            String jti = jwt.getId();
+                String jti = jwt.getId();
 
-            Boolean exists = redisTemplate.hasKey(AuthorizeConstants.BLACKLIST_PREFIX + jti);
+                Boolean exists = redisTemplate.hasKey(AuthorizeConstants.BLACKLIST_PREFIX + jti);
 
-            if (Boolean.TRUE.equals(exists)) {
+                if (Boolean.TRUE.equals(exists)) {
+                    response.setStatus(401);
+                    ServletUtils.renderJson(response, Result.error(401, "登录已失效."));
+                    return;
+                }
+            } catch (Exception e) {
+                log.error("黑名单处理失败.", e);
                 response.setStatus(401);
+                ServletUtils.renderJson(response, Result.error(401, e.getMessage()));
                 return;
             }
         }
