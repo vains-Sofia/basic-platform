@@ -22,4 +22,22 @@ server:
 # Mybatis Plus相关配置
 mybatis-plus:
   # mapper文件位置
-  mapper-locations: classpath*:/mapper/**/*.xml,classpath:com/basic/mapper/xml/*.xml
+  mapper-locations: classpath*:/mapper/**/*.xml,classpath:com/basic/mapper/xml/*.xml+
+
+basic:
+  cloud:
+    cors:
+      # 允许跨域地址
+      allowed-origins:
+        - http://localhost:5173
+        - http://127.0.0.1:5173
+
+    security:
+      token:
+        access-token-expire: 7200
+        refresh-token-expire: 7
+        issuer: basic-server
+
+      login:
+        # 前端页面地址
+        front-end-url: http://127.0.0.1:5173

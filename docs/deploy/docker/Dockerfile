@@ -1,7 +1,9 @@
 FROM registry.cn-guangzhou.aliyuncs.com/github-proxy/maven:3.9.12-ibm-semeru-25-noble AS build
 WORKDIR /app
 COPY . .
-RUN mvn clean package -DskipTests
+# RUN mvn clean package -DskipTests
+# 国内环境打包特别设置
+RUN mvn clean package -s settings.xml -DskipTests
 
 # 分层构建镜像
 FROM registry.cn-guangzhou.aliyuncs.com/github-proxy/bellsoft-liberica-openjre-debian:25-cds AS builder

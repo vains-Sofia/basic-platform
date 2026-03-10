@@ -9,22 +9,17 @@ import java.util.Set;
  */
 public class AuthorizeConstants {
 
-    /**
-     * access_token过期时间，单位：秒(s)
-     */
-    public static final long ACCESS_TOKEN_EXPIRY = 7200L;
-
-    /**
-     * refresh_token过期时间，单位：天(d)
-     */
-    public static final long REFRESH_TOKEN_EXPIRY = 30L;
-
-    private static final String BASIC_PREFIX = "basic-platform:";
+    public static final String BASIC_PREFIX = "basic-platform:";
 
     /**
      * 认证信息前缀
      */
     public static final String AUTHENTICATION_PREFIX = BASIC_PREFIX + "authentication:";
+
+    /**
+     * 黑名单列表前缀
+     */
+    public static final String BLACKLIST_PREFIX = BASIC_PREFIX + "blacklist:";
 
     /**
      * 默认忽略鉴权的地址

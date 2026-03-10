@@ -1,8 +1,11 @@
 package com.basic.config;
 
 import com.basic.constant.AuthorizeConstants;
+import com.basic.filter.JwtBlacklistFilter;
 import com.basic.handler.security.LoginFailureHandler;
 import com.basic.handler.security.LoginSuccessHandler;
+import com.basic.property.CorsProperties;
+import com.basic.property.LoginProperties;
 import com.basic.service.TokenService;
 import com.basic.util.SecurityUtils;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -19,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -35,6 +39,7 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
+import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -60,9 +65,14 @@ import java.util.UUID;
 @EnableMethodSecurity(jsr250Enabled = true, securedEnabled = true)
 public class SecurityConfiguration {
 
+    private final CorsProperties corsProperties;
+
+    private final LoginProperties loginProperties;
+
+    private final RedisTemplate<String, Long> redisTemplate;
+
     @Bean
-    public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http,
-                                                          TokenService tokenService) {
+    public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http, TokenService tokenService, JwtDecoder jwtDecoder) {
         // 禁用 csrf 与 cors
         http.cors(Customizer.withDefaults());
         http.csrf(AbstractHttpConfigurer::disable);
@@ -71,14 +81,14 @@ public class SecurityConfiguration {
         // authorization server filter chain
         http.formLogin(form -> form
                 .loginProcessingUrl("/login")
-                .successHandler(new LoginSuccessHandler("http://127.0.0.1:5173", tokenService))
-                .failureHandler(new LoginFailureHandler("http://127.0.0.1:5173"))
+                .successHandler(new LoginSuccessHandler(loginProperties.getFrontEndUrl(), tokenService))
+                .failureHandler(new LoginFailureHandler(loginProperties.getFrontEndUrl()))
         );
 
         // 鉴权配置
         http.authorizeHttpRequests(authorize -> authorize
                 // 忽略指定url的认证、鉴权
-                .requestMatchers("/test/**").permitAll()
+                .requestMatchers("/test01/test01").permitAll()
                 .requestMatchers("/redis/lock/**").permitAll()
                 // 放行预检请求
                 .requestMatchers(HttpMethod.OPTIONS).permitAll()
@@ -92,6 +102,11 @@ public class SecurityConfiguration {
                 .authenticationEntryPoint(SecurityUtils::exceptionHandler)
                 .jwt(Customizer.withDefaults())
         );
+
+        // 添加黑名单过滤器
+        JwtBlacklistFilter jwtBlacklistFilter = new JwtBlacklistFilter(jwtDecoder, redisTemplate);
+        http.addFilterBefore(jwtBlacklistFilter, BearerTokenAuthenticationFilter.class);
+
         // 禁用 Session
         http.sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -184,8 +199,8 @@ public class SecurityConfiguration {
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         // 设置允许跨域的域名,如果允许携带cookie的话,路径就不能写*号, *表示所有的域名都可以跨域访问
-        config.addAllowedOrigin("http://localhost:5173");
-        // 设置跨域访问可以携带cookie
+        config.setAllowedOrigins(corsProperties.getAllowedOrigins());
+        // 设置跨域访问可以携带 Cookie
         config.setAllowCredentials(true);
         source.registerCorsConfiguration("/**", config);
         return source;
