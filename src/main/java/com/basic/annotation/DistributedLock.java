@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 @Documented
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface RedisLock {
+public @interface DistributedLock {
 
     /**
      * 分布式锁的key，支持使用spEl表达式

@@ -15,7 +15,7 @@ import java.util.concurrent.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class RedisLockControllerConcurrencyTest {
+class DistributedLockControllerConcurrencyTest {
 
     @Autowired
     private MockMvc mockMvc;

@@ -1,6 +1,6 @@
 package com.basic.aop;
 
-import com.basic.annotation.RedisLock;
+import com.basic.annotation.DistributedLock;
 import com.basic.enums.RedissonLockType;
 import com.basic.exception.RedisLockException;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,7 @@ import java.lang.reflect.Method;
 @Aspect
 @Component
 @RequiredArgsConstructor
-public class RedisLockAspect {
+public class DistributedLockAspect {
 
     /**
      * 默认分布式锁key的分隔符
@@ -58,22 +58,22 @@ public class RedisLockAspect {
      */
     private final DefaultParameterNameDiscoverer nameDiscoverer = new DefaultParameterNameDiscoverer();
 
-    @Pointcut("@annotation(com.basic.annotation.RedisLock)")
+    @Pointcut("@annotation(com.basic.annotation.DistributedLock)")
     public void redisLock() {
     }
 
     @Around("redisLock()")
     public Object around(ProceedingJoinPoint pjp) throws Throwable {
         // 获取分布式锁注解RedisLock
-        RedisLock redisLock = this.getRedisLockAnno(pjp);
-        if (redisLock == null) {
+        DistributedLock distributedLock = this.getRedisLockAnno(pjp);
+        if (distributedLock == null) {
             log.warn("获取注解失败，请检查aop配置.");
             return pjp.proceed();
         }
 
         String defaultKey;
         // 检验是否需要生成默认的key
-        if (ObjectUtils.isEmpty(redisLock.value())) {
+        if (ObjectUtils.isEmpty(distributedLock.value())) {
             MethodSignature signature = (MethodSignature) pjp.getSignature();
             Method method = signature.getMethod();
             // 根据方法生成默认的key
@@ -87,17 +87,17 @@ public class RedisLockAspect {
 
         String lockKey;
         if (ObjectUtils.isEmpty(defaultKey)) {
-            lockKey = this.getLockKey(pjp, redisLock);
+            lockKey = this.getLockKey(pjp, distributedLock);
         } else {
             lockKey = KEY_PREFIX.concat(defaultKey);
         }
 
         // 根据指定锁类型获取锁
         RedissonLockType lockType;
-        if (redisLock.lockType() == null) {
+        if (distributedLock.lockType() == null) {
             lockType = RedissonLockType.R_LOCK;
         } else {
-            lockType = redisLock.lockType();
+            lockType = distributedLock.lockType();
         }
 
         // 获取锁
@@ -106,10 +106,10 @@ public class RedisLockAspect {
         try {
             // 是否成功获取锁
             boolean success;
-            if (redisLock.leaseTime() != -1) {
-                success = lock.tryLock(redisLock.waitTime(), redisLock.leaseTime(), redisLock.timeUnit());
+            if (distributedLock.leaseTime() != -1) {
+                success = lock.tryLock(distributedLock.waitTime(), distributedLock.leaseTime(), distributedLock.timeUnit());
             } else {
-                success = lock.tryLock(redisLock.waitTime(), redisLock.timeUnit());
+                success = lock.tryLock(distributedLock.waitTime(), distributedLock.timeUnit());
             }
 
             if (log.isDebugEnabled()) {
@@ -117,7 +117,7 @@ public class RedisLockAspect {
             }
 
             if (!success) {
-                throw new RedisLockException(redisLock.message());
+                throw new RedisLockException(distributedLock.message());
             }
 
             // 执行上锁方法
@@ -140,29 +140,29 @@ public class RedisLockAspect {
     }
 
     /**
-     * 获取切面方法的分布式锁注解{@link RedisLock}
+     * 获取切面方法的分布式锁注解{@link DistributedLock}
      *
      * @param pjp 切面方法执行者
      * @return 分布式锁注解
      * @throws NoSuchMethodException 方法找不到时抛出
      */
-    private RedisLock getRedisLockAnno(ProceedingJoinPoint pjp) throws NoSuchMethodException {
+    private DistributedLock getRedisLockAnno(ProceedingJoinPoint pjp) throws NoSuchMethodException {
         String methodName = pjp.getSignature().getName();
         Class<?> clazz = pjp.getTarget().getClass();
         Class<?>[] par = ((MethodSignature) pjp.getSignature()).getParameterTypes();
         Method lockMethod = clazz.getMethod(methodName, par);
-        return lockMethod.getAnnotation(RedisLock.class);
+        return lockMethod.getAnnotation(DistributedLock.class);
     }
 
     /**
      * 获取 lockKey
      *
      * @param pjp       方法执行者
-     * @param redisLock 分布式锁注解
+     * @param distributedLock 分布式锁注解
      * @return redis锁的key
      */
-    private String getLockKey(ProceedingJoinPoint pjp, RedisLock redisLock) {
-        String lockKey = redisLock.value();
+    private String getLockKey(ProceedingJoinPoint pjp, DistributedLock distributedLock) {
+        String lockKey = distributedLock.value();
         Assert.hasText(lockKey, "lockKey must not be empty");
         if (lockKey.contains("#")) {
             this.checkSpEL(lockKey);
