@@ -1,79 +1,138 @@
 package com.basic.service.impl;
 
 import com.basic.constant.AuthorizeConstants;
+import com.basic.domain.model.RefreshTokenInfo;
 import com.basic.domain.response.TokenResponse;
+import com.basic.property.TokenProperties;
 import com.basic.service.TokenService;
-import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.oauth2.jwt.JwtClaimsSet;
-import org.springframework.security.oauth2.jwt.JwtEncoder;
-import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
+import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
+import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-/**
- * token service实现
- *
- * @author vains
- */
 @Service
 @RequiredArgsConstructor
 public class TokenServiceImpl implements TokenService {
 
     private final JwtEncoder jwtEncoder;
 
-    @Resource
-    private RedisTemplate<String, Authentication> redisTemplate;
+    private final JwtDecoder jwtDecoder;
+
+    private final TokenProperties tokenProperties;
+
+    private final RedisTemplate<String, Long> blackRedisTemplate;
+
+    private final RedisTemplate<String, RefreshTokenInfo> redisTemplate;
 
     @Override
-    public String generateAccessToken(Authentication authentication, long expiry) {
-        // 构建JWT Token
-        Instant now = Instant.now();
+    public TokenResponse generateToken(Authentication authentication) {
 
-        // 从认证信息中获取用户权限信息
-        String scope = authentication.getAuthorities().stream()
+        String accessToken = generateAccessToken(authentication);
+
+        String refreshToken = UUID.randomUUID().toString();
+
+        RefreshTokenInfo tokenInfo = new RefreshTokenInfo();
+
+        tokenInfo.setUsername(authentication.getName());
+
+        String scope = authentication.getAuthorities()
+                .stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(" "));
-        // 构建JWT Token的Claims
-        JwtClaimsSet.Builder builder = JwtClaimsSet.builder()
-                .issuer("self")
-                .issuedAt(now)
-                .expiresAt(now.plusSeconds(expiry))
+
+        tokenInfo.setScope(scope);
+
+        tokenInfo.setExpireAt(Instant.now().plusSeconds(tokenProperties.getAccessTokenExpire()));
+
+        String refreshKey = AuthorizeConstants.AUTHENTICATION_PREFIX + refreshToken;
+
+        redisTemplate.opsForValue().set(
+                refreshKey,
+                tokenInfo,
+                tokenProperties.getRefreshTokenExpire(),
+                TimeUnit.DAYS
+        );
+
+        TokenResponse response = new TokenResponse();
+
+        response.setAccessToken(accessToken);
+        response.setRefreshToken(refreshToken);
+        response.setExpiresIn(tokenProperties.getAccessTokenExpire());
+
+        return response;
+    }
+
+    private String generateAccessToken(Authentication authentication) {
+
+        Instant now = Instant.now();
+
+        String scope = authentication.getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(" "));
+
+        JwtClaimsSet claims = JwtClaimsSet.builder()
+                .issuer(tokenProperties.getIssuer())
                 .subject(authentication.getName())
-                .claim("scope", scope);
+                .issuedAt(now)
+                .expiresAt(now.plusSeconds(tokenProperties.getAccessTokenExpire()))
+                .id(UUID.randomUUID().toString())
+                .claim(OAuth2ParameterNames.SCOPE, scope)
+                .build();
 
-        JwtClaimsSet claims = builder.build();
-
-        // 生成JWT Token并返回
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }
 
     @Override
-    public TokenResponse generateTokenResponse(Authentication authentication,
-                                               long accessTokenExpiry,
-                                               long refreshTokenExpiry) {
+    public TokenResponse refreshToken(String refreshToken) {
 
-        // 生成JWT Token并返回
-        String tokenValue = this.generateAccessToken(authentication, accessTokenExpiry);
-        String refreshToken = UUID.randomUUID().toString();
-        // 存入缓存中，30天后过期
-        String authorizationKey = AuthorizeConstants.AUTHENTICATION_PREFIX + refreshToken;
-        redisTemplate.opsForValue().set(authorizationKey, authentication, refreshTokenExpiry, TimeUnit.DAYS);
+        String key = AuthorizeConstants.AUTHENTICATION_PREFIX + refreshToken;
 
-        // 构建响应bean
-        TokenResponse tokenResponse = new TokenResponse();
-        tokenResponse.setAccessToken(tokenValue);
-        tokenResponse.setRefreshToken(refreshToken);
-        tokenResponse.setExpires(LocalDateTime.now().plusSeconds(accessTokenExpiry).toInstant(ZoneOffset.ofHours(8)).toEpochMilli());
-        return tokenResponse;
+        RefreshTokenInfo tokenInfo = redisTemplate.opsForValue().get(key);
+
+        if (tokenInfo == null) {
+            throw new RuntimeException("refresh token invalid");
+        }
+
+        // refresh token rotation
+        redisTemplate.delete(key);
+
+        Authentication authentication =
+                org.springframework.security.authentication.UsernamePasswordAuthenticationToken.authenticated(
+                        tokenInfo.getUsername(),
+                        null,
+                        org.springframework.security.core.authority.AuthorityUtils
+                                .commaSeparatedStringToAuthorityList(tokenInfo.getScope())
+                );
+
+        return generateToken(authentication);
+    }
+
+    @Override
+    public void revokeToken(String accessToken) {
+
+        Jwt jwt = jwtDecoder.decode(accessToken);
+
+        String jti = jwt.getId();
+
+        if (jwt.getExpiresAt() == null || jwt.getExpiresAt().isBefore(Instant.now())) {
+            return;
+        }
+        long expire = jwt.getExpiresAt().getEpochSecond() - Instant.now().getEpochSecond();
+
+        blackRedisTemplate.opsForValue().set(
+                AuthorizeConstants.BLACKLIST_PREFIX + jti,
+                1L,
+                expire,
+                TimeUnit.SECONDS
+        );
     }
 }

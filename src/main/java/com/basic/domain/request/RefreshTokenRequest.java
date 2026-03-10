@@ -10,14 +10,14 @@ import lombok.Data;
  * @author vains
  */
 @Data
-@Schema(title = "刷新access_token入参", description = "刷新access_token入参")
+@Schema(title = "RefreshTokenRequest", description = "刷新access_token入参")
 public class RefreshTokenRequest {
 
     /**
      * 刷新token，登录时获取的refresh_token
      */
     @NotBlank
-    @Schema(title = "刷新token", description = "登录时获取的refresh_token")
+    @Schema(title = "Refresh Token", description = "登录时获取的refresh_token")
     private String refreshToken;
 
 }

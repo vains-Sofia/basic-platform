@@ -91,8 +91,8 @@ public enum RedissonLockType implements BasicEnum<String, RedissonLockType> {
     /**
      * 默认的获取锁的操作，由子类重写提供
      *
-     * @param redisson 分布式锁的Java实现{@link RedissonClient}实例
-     * @param lockKey  分布式锁的key
+     * @param redisson 分布式锁的 Java 实现{@link RedissonClient}实例
+     * @param lockKey  分布式锁的 key
      * @return 获取到的分布式锁实例
      */
     public RLock getLock(RedissonClient redisson, String lockKey) {
