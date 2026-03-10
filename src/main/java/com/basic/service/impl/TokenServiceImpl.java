@@ -1,6 +1,7 @@
 package com.basic.service.impl;
 
 import com.basic.constant.AuthorizeConstants;
+import com.basic.domain.model.BasicUserDetails;
 import com.basic.domain.model.RefreshTokenInfo;
 import com.basic.domain.response.TokenResponse;
 import com.basic.property.TokenProperties;
@@ -72,6 +73,16 @@ public class TokenServiceImpl implements TokenService {
 
     private String generateAccessToken(Authentication authentication) {
 
+        String userId;
+        String subject;
+        if (authentication.getPrincipal() instanceof BasicUserDetails userDetails) {
+            subject =  userDetails.getNickname();
+            userId = String.valueOf(userDetails.getId());
+        } else {
+            userId = "";
+            subject = "";
+        }
+
         Instant now = Instant.now();
 
         String scope = authentication.getAuthorities()
@@ -81,11 +92,12 @@ public class TokenServiceImpl implements TokenService {
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer(tokenProperties.getIssuer())
-                .subject(authentication.getName())
+                .subject(subject)
                 .issuedAt(now)
                 .expiresAt(now.plusSeconds(tokenProperties.getAccessTokenExpire()))
                 .id(UUID.randomUUID().toString())
                 .claim(OAuth2ParameterNames.SCOPE, scope)
+                .claim(AuthorizeConstants.CLAIM_USER_ID, userId)
                 .build();
 
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();

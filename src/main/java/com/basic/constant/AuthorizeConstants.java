@@ -12,6 +12,11 @@ public class AuthorizeConstants {
     public static final String BASIC_PREFIX = "basic-platform:";
 
     /**
+     * 用户主键 ID
+     */
+    public static final String CLAIM_USER_ID = "user_id";
+
+    /**
      * 认证信息前缀
      */
     public static final String AUTHENTICATION_PREFIX = BASIC_PREFIX + "authentication:";

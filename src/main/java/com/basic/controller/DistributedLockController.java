@@ -3,6 +3,7 @@ package com.basic.controller;
 import com.basic.annotation.DistributedLock;
 import com.basic.domain.Result;
 import com.basic.exception.CloudServiceException;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,13 +19,14 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @RestController
+@Tag(name = "分布式锁测试接口")
 @RequestMapping("/redis/lock")
-public class RedisLockController {
+public class DistributedLockController {
 
     private int publicResource = 10;
 
-    @DistributedLock
     @SneakyThrows
+    @DistributedLock
     @GetMapping("/test01")
     public Result<Integer> test01() {
         TimeUnit.MILLISECONDS.sleep(100);
@@ -35,8 +37,8 @@ public class RedisLockController {
         return Result.success(--publicResource);
     }
 
-    @DistributedLock
     @SneakyThrows
+    @DistributedLock
     @GetMapping("/test02")
     public Result<Integer> test02() {
         if (publicResource >= 20) {

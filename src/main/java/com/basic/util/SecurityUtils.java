@@ -1,5 +1,6 @@
 package com.basic.util;
 
+import com.basic.constant.AuthorizeConstants;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.experimental.UtilityClass;
@@ -16,7 +17,6 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.BearerTokenError;
 import org.springframework.security.oauth2.server.resource.BearerTokenErrorCodes;
 import org.springframework.security.oauth2.server.resource.authentication.AbstractOAuth2TokenAuthenticationToken;
-import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
@@ -37,16 +37,19 @@ public class SecurityUtils {
     /**
      * 获取当前登录用户的 id
      *
-     * @return 当前登录用户的id
+     * @return 当前登录用户的 id
      */
     public static String getLoginUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Assert.notNull(authentication, "Authentication must not be null");
+        if (authentication == null) {
+            return null;
+        }
+
         // 获取当前认证信息
         Object principal = authentication.getPrincipal();
         if (principal instanceof Jwt jwt) {
             // 获取当前用户 id
-            return jwt.getId();
+            return jwt.getClaimAsString(AuthorizeConstants.CLAIM_USER_ID);
         }
         return null;
     }
