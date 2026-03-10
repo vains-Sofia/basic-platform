@@ -1,5 +1,8 @@
 package com.basic.controller;
 
+import com.basic.domain.Result;
+import com.basic.domain.entity.SysDictType;
+import com.basic.service.SysDictTypeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +11,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 import static com.basic.constant.AuthorizeConstants.BASIC_PREFIX;
 
@@ -21,6 +26,8 @@ import static com.basic.constant.AuthorizeConstants.BASIC_PREFIX;
 @RequestMapping("/test01")
 @Tag(name = "测试接口", description = "测试接口")
 public class Test01Controller {
+
+    private final SysDictTypeService sysDictTypeService;
 
     private final RedisTemplate<String, String> redisTemplate;
 
@@ -50,6 +57,13 @@ public class Test01Controller {
         String test = redisTemplate.opsForValue().get(BASIC_PREFIX.concat("test03"));
         System.out.println(test);
         return test;
+    }
+
+    @GetMapping("/dict/types")
+    @Operation(summary = "测试接口-04", description = "测试接口-04")
+    public Result<List<SysDictType>> dictTypes() {
+
+        return Result.success(sysDictTypeService.list());
     }
 
 }

@@ -1,6 +1,6 @@
 package com.basic.controller;
 
-import com.basic.annotation.RedisLock;
+import com.basic.annotation.DistributedLock;
 import com.basic.domain.Result;
 import com.basic.exception.CloudServiceException;
 import lombok.SneakyThrows;
@@ -23,7 +23,7 @@ public class RedisLockController {
 
     private int publicResource = 10;
 
-    @RedisLock
+    @DistributedLock
     @SneakyThrows
     @GetMapping("/test01")
     public Result<Integer> test01() {
@@ -35,7 +35,7 @@ public class RedisLockController {
         return Result.success(--publicResource);
     }
 
-    @RedisLock
+    @DistributedLock
     @SneakyThrows
     @GetMapping("/test02")
     public Result<Integer> test02() {

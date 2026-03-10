@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.basic.mapper.SysPermissionMapper">
+
+    <resultMap id="BaseResultMap" type="com.basic.domain.entity.SysPermission">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="title" column="title" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="permission" column="permission" jdbcType="VARCHAR"/>
+        <result property="path" column="path" jdbcType="VARCHAR"/>
+        <result property="requestMethod" column="request_method" jdbcType="VARCHAR"/>
+        <result property="permissionType" column="permission_type" jdbcType="TINYINT"/>
+        <result property="moduleName" column="module_name" jdbcType="VARCHAR"/>
+        <result property="description" column="description" jdbcType="VARCHAR"/>
+        <result property="needAuthentication" column="need_authentication" jdbcType="TINYINT"/>
+        <result property="parentId" column="parent_id" jdbcType="BIGINT"/>
+        <result property="component" column="component" jdbcType="VARCHAR"/>
+        <result property="redirect" column="redirect" jdbcType="VARCHAR"/>
+        <result property="deleted" column="deleted" jdbcType="TINYINT"/>
+        <result property="icon" column="icon" jdbcType="VARCHAR"/>
+        <result property="extraIcon" column="extra_icon" jdbcType="VARCHAR"/>
+        <result property="enterTransition" column="enter_transition" jdbcType="VARCHAR"/>
+        <result property="leaveTransition" column="leave_transition" jdbcType="VARCHAR"/>
+        <result property="frameSrc" column="frame_src" jdbcType="VARCHAR"/>
+        <result property="frameLoading" column="frame_loading" jdbcType="VARCHAR"/>
+        <result property="keepAlive" column="keep_alive" jdbcType="TINYINT"/>
+        <result property="showLink" column="show_link" jdbcType="TINYINT"/>
+        <result property="hiddenTag" column="hidden_tag" jdbcType="TINYINT"/>
+        <result property="fixedTag" column="fixed_tag" jdbcType="TINYINT"/>
+        <result property="showParent" column="show_parent" jdbcType="TINYINT"/>
+        <result property="rank" column="rank" jdbcType="DECIMAL"/>
+        <result property="activePath" column="active_path" jdbcType="VARCHAR"/>
+        <result property="createBy" column="create_by" jdbcType="BIGINT"/>
+        <result property="updateBy" column="update_by" jdbcType="BIGINT"/>
+        <result property="createName" column="create_name" jdbcType="VARCHAR"/>
+        <result property="updateName" column="update_name" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id
+        ,title,name,
+        permission,path,request_method,
+        permission_type,module_name,description,
+        need_authentication,parent_id,component,
+        redirect,deleted,icon,
+        extra_icon,enter_transition,leave_transition,
+        frame_src,frame_loading,keep_alive,
+        show_link,hidden_tag,fixed_tag,
+        show_parent,rank,active_path,
+        create_by,update_by,create_name,
+        update_name,create_time,update_time
+    </sql>
+</mapper>
