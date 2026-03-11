@@ -56,7 +56,7 @@ public class SysBasicUser extends BasicEntity {
     /**
      * 邮箱是否验证过
      */
-    private Integer emailVerified;
+    private Boolean emailVerified;
 
     /**
      * 用户性别

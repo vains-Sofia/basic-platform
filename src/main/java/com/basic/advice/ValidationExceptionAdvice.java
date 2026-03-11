@@ -29,7 +29,7 @@ import java.util.List;
 public class ValidationExceptionAdvice {
 
     /**
-     * 处理Json请求参数异常
+     * 处理 Json请求参数异常
      *
      * @param e 具体地校验异常
      * @return 返回处理后的异常信息
@@ -44,7 +44,7 @@ public class ValidationExceptionAdvice {
     }
 
     /**
-     * 处理Form请求参数异常
+     * 处理 Form请求参数异常
      *
      * @param e 具体地校验异常
      * @return 返回处理后的异常信息

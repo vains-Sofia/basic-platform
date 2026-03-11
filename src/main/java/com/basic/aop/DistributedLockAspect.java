@@ -2,7 +2,7 @@ package com.basic.aop;
 
 import com.basic.annotation.DistributedLock;
 import com.basic.enums.RedissonLockType;
-import com.basic.exception.RedisLockException;
+import com.basic.exception.DistributedLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -117,14 +117,14 @@ public class DistributedLockAspect {
             }
 
             if (!success) {
-                throw new RedisLockException(distributedLock.message());
+                throw new DistributedLockException(distributedLock.message());
             }
 
             // 执行上锁方法
             return pjp.proceed();
         } catch (InterruptedException e) {
             log.error("Redis分布式锁加锁时中断", e);
-            throw new RedisLockException(e.getMessage());
+            throw new DistributedLockException(e.getMessage());
         } finally {
             if (lock.isHeldByCurrentThread()) {
                 if (log.isDebugEnabled()) {
@@ -197,7 +197,7 @@ public class DistributedLockAspect {
         }
         Object value = expression.getValue(context);
         if (value == null) {
-            throw new RedisLockException("The parameter value (spEL value) cannot be null");
+            throw new DistributedLockException("The parameter value (spEL value) cannot be null");
         }
         return value.toString();
     }
@@ -213,7 +213,7 @@ public class DistributedLockAspect {
             parser.parseExpression(spEL, new TemplateParserContext());
         } catch (Exception e) {
             log.error("spEL表达式解析异常", e);
-            throw new RedisLockException("Invalid SpEL expression [" + spEL + "]");
+            throw new DistributedLockException("Invalid SpEL expression [" + spEL + "]");
         }
     }
 
