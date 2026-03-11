@@ -24,11 +24,11 @@ public class KeepAliveService {
 
     @Scheduled(cron = "0 */5 * * * *")
     public void keepAlive() {
-        String body = restClient.get()
-                .uri("/test/test01")
+        restClient.get()
+                .uri("/test01/test01")
                 .retrieve()
                 .body(String.class);
-        log.info("KeepAlive body: {}", body);
+//        log.info("KeepAlive body: {}", body);
     }
 
 }

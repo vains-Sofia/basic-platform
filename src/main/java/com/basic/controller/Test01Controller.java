@@ -35,9 +35,7 @@ public class Test01Controller {
     @Operation(summary = "测试接口-01", description = "测试接口-01")
     public String test01() {
         redisTemplate.opsForValue().set(BASIC_PREFIX.concat("test01"), "test");
-        String test = redisTemplate.opsForValue().get(BASIC_PREFIX.concat("test01"));
-        System.out.println(test);
-        return test;
+        return redisTemplate.opsForValue().get(BASIC_PREFIX.concat("test01"));
     }
 
     @GetMapping("/test02")
