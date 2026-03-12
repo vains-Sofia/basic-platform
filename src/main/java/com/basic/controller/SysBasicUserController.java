@@ -34,7 +34,7 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user")
-@Tag(name = "基础用户信息接口", description = "基础用户信息接口")
+@Tag(name = "RBAC 基础用户信息接口", description = "RBAC 基础用户信息接口")
 public class SysBasicUserController {
 
     private final SysBasicUserService basicUserService;

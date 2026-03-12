@@ -44,6 +44,7 @@ public class TokenServiceImpl implements TokenService {
 
         tokenInfo.setUsername(authentication.getName());
 
+        // TODO 待优化为登录用户信息缓存至Redis
         String scope = authentication.getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
