@@ -121,27 +121,27 @@ public class SysPermission extends BasicEntity {
     /**
      * 缓存页面（是否缓存该路由页面，开启后会保存该页面的整体状态，刷新后会清空状态）
      */
-    private Integer keepAlive;
+    private Boolean keepAlive;
 
     /**
      * 是否显示该菜单
      */
-    private Integer showLink;
+    private Boolean showLink;
 
     /**
      * 隐藏标签页（当前菜单名称或自定义信息禁止添加到标签页）
      */
-    private Integer hiddenTag;
+    private Boolean hiddenTag;
 
     /**
      * 固定标签页（当前菜单名称是否固定显示在标签页且不可关闭）
      */
-    private Integer fixedTag;
+    private Boolean fixedTag;
 
     /**
      * 是否显示父级菜单
      */
-    private Integer showParent;
+    private Boolean showParent;
 
     /**
      * 菜单排序

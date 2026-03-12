@@ -46,4 +46,17 @@ public enum PermissionTypeEnum implements BasicEnum<Integer, PermissionTypeEnum>
     public Integer getValue() {
         return this.type;
     }
+
+    /**
+     * 是否是菜单类型
+     *
+     * @param permissionType 权限类型
+     * @return true 是菜单类型，false 不是菜单类型
+     */
+    public static boolean isMenuType(PermissionTypeEnum permissionType) {
+        if (permissionType == null) {
+            return false;
+        }
+        return MENU.equals(permissionType) || IFRAME.equals(permissionType) || EXTERNAL_LINK.equals(permissionType);
+    }
 }
