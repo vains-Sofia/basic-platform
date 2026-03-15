@@ -1,4 +1,4 @@
-package com.basic.controller;
+package com.basic.controller.system;
 
 import com.basic.domain.PageResult;
 import com.basic.domain.Result;

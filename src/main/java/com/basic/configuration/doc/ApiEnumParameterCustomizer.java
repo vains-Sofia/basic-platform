@@ -1,4 +1,4 @@
-package com.basic.config.doc;
+package com.basic.configuration.doc;
 
 import com.basic.enums.BasicEnum;
 import io.swagger.v3.oas.models.media.Schema;

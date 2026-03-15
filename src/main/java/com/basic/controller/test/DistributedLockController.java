@@ -1,4 +1,4 @@
-package com.basic.controller;
+package com.basic.controller.test;
 
 import com.basic.annotation.DistributedLock;
 import com.basic.domain.Result;

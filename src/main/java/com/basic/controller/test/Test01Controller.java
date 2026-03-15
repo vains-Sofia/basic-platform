@@ -1,4 +1,4 @@
-package com.basic.controller;
+package com.basic.controller.test;
 
 import com.basic.domain.Result;
 import com.basic.domain.entity.SysDictType;

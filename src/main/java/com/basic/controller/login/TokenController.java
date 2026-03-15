@@ -1,4 +1,4 @@
-package com.basic.controller;
+package com.basic.controller.login;
 
 import com.basic.domain.response.TokenResponse;
 import com.basic.service.TokenService;

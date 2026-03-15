@@ -1,4 +1,4 @@
-package com.basic.config;
+package com.basic.configuration;
 
 import com.basic.enums.BasicEnum;
 import com.fasterxml.jackson.databind.type.TypeFactory;

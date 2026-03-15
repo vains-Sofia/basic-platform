@@ -10,6 +10,12 @@ spring:
       host: ${REDIS_HOST:127.0.0.1}
       database: 5
 
+  mail:
+    host: smtp.163.com
+    port: 25
+    username: 17683906991@163.com
+    password: ${MAIL_PASSWORD}
+
 springdoc:
   # 是否显示登录接口
   show-login-endpoint: true
@@ -19,12 +25,12 @@ server:
 
 # Mybatis Plus相关配置
 mybatis-plus:
-  # mapper文件位置
+  # mapper 文件位置
   mapper-locations: classpath*:/mapper/**/*.xml,classpath:com/basic/mapper/xml/*.xml
 
 logging:
   level:
-    # 打印SQL
+    # 打印 SQL
     com.basic.mapper: debug
 
 basic:
@@ -44,3 +50,10 @@ basic:
       login:
         # 前端页面地址
         front-end-url: http://127.0.0.1:5173
+
+    # minio 配置
+    minio:
+      bucket: basic-platform
+      endpoint: http://minio.vains.ddns-ip.net:20000
+      access-key: ${MINIO_ACCESS_KEY}
+      secret-key: ${MINIO_SECRET_KEY}

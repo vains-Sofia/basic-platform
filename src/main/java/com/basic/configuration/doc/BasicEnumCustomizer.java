@@ -1,4 +1,4 @@
-package com.basic.config.doc;
+package com.basic.configuration.doc;
 
 import io.swagger.v3.core.util.PrimitiveType;
 import io.swagger.v3.oas.models.media.ObjectSchema;

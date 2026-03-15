@@ -1,11 +1,11 @@
-package com.basic.config;
+package com.basic.configuration;
 
 import com.basic.constant.AuthorizeConstants;
 import com.basic.filter.JwtBlacklistFilter;
 import com.basic.handler.security.LoginFailureHandler;
 import com.basic.handler.security.LoginSuccessHandler;
 import com.basic.property.CorsProperties;
-import com.basic.property.LoginProperties;
+import com.basic.property.BasicLoginProperties;
 import com.basic.service.TokenService;
 import com.basic.util.SecurityUtils;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -62,7 +62,7 @@ public class SecurityConfiguration {
 
     private final CorsProperties corsProperties;
 
-    private final LoginProperties loginProperties;
+    private final BasicLoginProperties basicLoginProperties;
 
     private final RedisTemplate<String, Long> redisTemplate;
 
@@ -76,8 +76,8 @@ public class SecurityConfiguration {
         // authorization server filter chain
         http.formLogin(form -> form
                 .loginProcessingUrl("/login")
-                .successHandler(new LoginSuccessHandler(loginProperties.getFrontEndUrl(), tokenService))
-                .failureHandler(new LoginFailureHandler(loginProperties.getFrontEndUrl()))
+                .successHandler(new LoginSuccessHandler(basicLoginProperties.getFrontEndUrl(), tokenService))
+                .failureHandler(new LoginFailureHandler(basicLoginProperties.getFrontEndUrl()))
         );
 
         // 鉴权配置
