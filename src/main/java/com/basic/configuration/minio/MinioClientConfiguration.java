@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * MinIO客户端配置
+ * MinIO 客户端配置
  *
  * @author vains
  */
@@ -23,7 +23,7 @@ public class MinioClientConfiguration {
     /**
      * 将MinIO Client注册为Bean
      *
-     * @return MinioClient实例
+     * @return MinioClient 实例
      */
     @Bean
     public MinioClient minioClient() {
@@ -35,13 +35,13 @@ public class MinioClientConfiguration {
                     .build();
             return new MutableMinioClient(minioClient, createMinioAsyncClient());
         } catch (Exception e) {
-            log.error("初始化minio配置异常: {}", e.getMessage());
+            log.error("初始化 MinIO 配置异常: {}", e.getMessage());
         }
         return null;
     }
 
     /**
-     * 创建支持代理的MinioAsyncClient
+     * 创建支持代理的 MinioAsyncClient
      *
      * @return MutableMinioAsyncClient
      */
