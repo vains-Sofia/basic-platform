@@ -12,6 +12,12 @@ spring:
       ssl:
         enabled: true
 
+  mail:
+    host: smtp.163.com
+    port: 25
+    username: 17683906991@163.com
+    password: ${MAIL_PASSWORD}
+
 springdoc:
   show-login-endpoint: true
 server:
@@ -41,3 +47,11 @@ basic:
       login:
         # 前端页面地址
         front-end-url: http://127.0.0.1:5173
+
+    # minio 配置
+    minio:
+      bucket: basic-platform
+      endpoint: http://${SERVER_URL}:9000
+      access-key: ${MINIO_ACCESS_KEY}
+      secret-key: ${MINIO_SECRET_KEY}
+      proxy-endpoint: http://minio.vains.ddns-ip.net:20000/
