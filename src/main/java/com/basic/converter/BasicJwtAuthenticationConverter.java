@@ -2,14 +2,12 @@ package com.basic.converter;
 
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
-import org.springframework.stereotype.Component;
 
 /**
  * jwt token转换器
  *
  * @author vains
  */
-@Component
 public class BasicJwtAuthenticationConverter extends JwtAuthenticationConverter {
 
     public BasicJwtAuthenticationConverter() {

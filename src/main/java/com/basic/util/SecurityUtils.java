@@ -1,6 +1,6 @@
 package com.basic.util;
 
-import com.basic.constant.AuthorizeConstants;
+import com.basic.domain.model.BasicUserDetails;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.experimental.UtilityClass;
@@ -13,7 +13,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2Error;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.BearerTokenError;
 import org.springframework.security.oauth2.server.resource.BearerTokenErrorCodes;
 import org.springframework.security.oauth2.server.resource.authentication.AbstractOAuth2TokenAuthenticationToken;
@@ -39,7 +38,7 @@ public class SecurityUtils {
      *
      * @return 当前登录用户的 id
      */
-    public static String getLoginUserId() {
+    public static BasicUserDetails getLoginUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null) {
             return null;
@@ -47,11 +46,25 @@ public class SecurityUtils {
 
         // 获取当前认证信息
         Object principal = authentication.getPrincipal();
-        if (principal instanceof Jwt jwt) {
+        if (principal instanceof BasicUserDetails userDetails) {
             // 获取当前用户 id
-            return jwt.getClaimAsString(AuthorizeConstants.CLAIM_USER_ID);
+            return userDetails;
         }
         return null;
+    }
+
+    /**
+     * 获取当前登录用户的 id
+     *
+     * @return 当前登录用户的 id
+     */
+    public static String getLoginUserId() {
+        BasicUserDetails loginUser = getLoginUser();
+        if (loginUser == null) {
+            return null;
+        }
+
+        return String.valueOf(loginUser.getId());
     }
 
     /**

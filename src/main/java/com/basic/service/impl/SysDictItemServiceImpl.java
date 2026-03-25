@@ -75,7 +75,7 @@ public class SysDictItemServiceImpl extends ServiceImpl<SysDictItemMapper, SysDi
 
         LambdaQueryWrapper<SysDictItem> itemWrapper = Wrappers.lambdaQuery(SysDictItem.class)
                 .eq(SysDictItem::getStatus, StatusEnum.ENABLE.getCode())
-                .ne(SysDictItem::getTypeCode, dictType.getTypeCode())
+                .eq(SysDictItem::getTypeCode, dictType.getTypeCode())
                 .orderByAsc(SysDictItem::getSortOrder);
 
         List<SysDictItem> dictItems = this.list(itemWrapper);

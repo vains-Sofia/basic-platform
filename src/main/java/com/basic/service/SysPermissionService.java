@@ -89,4 +89,11 @@ public interface SysPermissionService extends IService<SysPermission> {
      * @return 权限列表
      */
     List<SysPermission> findPermissionsByUserId(@NotNull Long userId);
+
+    /**
+     * 根据 权限ID 删除权限，并删除所有子级
+     *
+     * @param id 主键 ID
+     */
+    void removeWithChildren(@NotNull Long id);
 }

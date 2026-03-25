@@ -1,11 +1,13 @@
 package com.basic.domain.model;
 
 import com.basic.domain.entity.SysBasicUser;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.annotation.Nonnull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import tools.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.Collection;
 
@@ -16,6 +18,8 @@ import java.util.Collection;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@JsonDeserialize(as = BasicUserDetails.class)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public class BasicUserDetails extends SysBasicUser implements UserDetails {
 
     /**

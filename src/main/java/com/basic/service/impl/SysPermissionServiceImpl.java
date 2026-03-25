@@ -309,6 +309,32 @@ public class SysPermissionServiceImpl extends ServiceImpl<SysPermissionMapper, S
         return List.of();
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void removeWithChildren(Long id) {
+        List<Long> ids = new ArrayList<>();
+        // 递归收集所有 后代ID
+        collectChildIds(id, ids);
+        // 加上自身
+        ids.add(id);
+        removeByIds(ids);
+    }
+
+    /**
+     * 递归收集所有 子节点ID
+     *
+     * @param parentId  父节点 ID
+     * @param collector 子节点ID 集合
+     */
+    private void collectChildIds(Long parentId, List<Long> collector) {
+        List<SysPermission> children = lambdaQuery().eq(SysPermission::getParentId, parentId).list();
+        for (SysPermission child : children) {
+            collector.add(child.getId());
+            // 递归收集
+            collectChildIds(child.getId(), collector);
+        }
+    }
+
     /**
      * 构建唯一键，用于检查重复的路径和请求方法组合
      *

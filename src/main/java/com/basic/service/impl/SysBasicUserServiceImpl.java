@@ -7,8 +7,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.basic.domain.PageResult;
 import com.basic.domain.entity.SysBasicUser;
-import com.basic.domain.entity.SysRole;
 import com.basic.domain.entity.SysUserRole;
+import com.basic.domain.model.BasicUserDetails;
 import com.basic.domain.request.FindBasicUserPageRequest;
 import com.basic.domain.request.SaveBasicUserRequest;
 import com.basic.domain.request.UpdateUserRolesRequest;
@@ -17,7 +17,6 @@ import com.basic.domain.response.FindBasicUserResponse;
 import com.basic.enums.OAuth2AccountPlatformEnum;
 import com.basic.exception.CloudIllegalArgumentException;
 import com.basic.mapper.SysBasicUserMapper;
-import com.basic.mapper.SysRoleMapper;
 import com.basic.mapper.SysUserRoleMapper;
 import com.basic.service.SysBasicUserService;
 import com.basic.util.SecurityUtils;
@@ -31,8 +30,6 @@ import org.springframework.util.ObjectUtils;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * 针对表【sys_basic_user(基础用户信息表)】的数据库操作Service实现
@@ -43,8 +40,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SysBasicUserServiceImpl extends ServiceImpl<SysBasicUserMapper, SysBasicUser>
         implements SysBasicUserService {
-
-    private final SysRoleMapper sysRoleMapper;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -136,28 +131,13 @@ public class SysBasicUserServiceImpl extends ServiceImpl<SysBasicUserMapper, Sys
     @Override
     public AuthenticatedUserResponse getLoginUserinfo() {
         AuthenticatedUserResponse userResponse = new AuthenticatedUserResponse();
-        String loginUserId = SecurityUtils.getLoginUserId();
-        if (!ObjectUtils.isEmpty(loginUserId)) {
-            // 获取用户信息
-            Optional<SysBasicUser> basicUser = this.getOptById(loginUserId);
-            basicUser.ifPresent(e -> BeanUtils.copyProperties(e, userResponse));
+        BasicUserDetails loginUser = SecurityUtils.getLoginUser();
 
-            // 查询用户角色 ID
-            LambdaQueryWrapper<SysUserRole> userRoleWrapper = Wrappers.lambdaQuery(SysUserRole.class)
-                    .eq(SysUserRole::getUserId, loginUserId);
-            List<SysUserRole> sysUserRoles = sysUserRoleMapper.selectList(userRoleWrapper);
-            if (!ObjectUtils.isEmpty(sysUserRoles)) {
-                // 角色 ID
-                Set<Long> roleIds = sysUserRoles.stream().map(SysUserRole::getRoleId).collect(Collectors.toSet());
-
-                // 查询角色
-                List<SysRole> sysRoles = sysRoleMapper.selectByIds(roleIds);
-                if (!ObjectUtils.isEmpty(sysRoles)) {
-                    List<String> list = sysRoles.stream().map(SysRole::getCode).toList();
-                    userResponse.setRoles(list);
-                }
-            }
+        if (ObjectUtils.isEmpty(loginUser)) {
+            return userResponse;
         }
+
+        BeanUtils.copyProperties(loginUser, userResponse);
 
         // 暂时不返回权限
         userResponse.setAuthorities(null);

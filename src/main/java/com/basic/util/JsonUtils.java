@@ -137,8 +137,11 @@ public class JsonUtils {
      * @return 返回T的实例
      */
     public static <T> T objectToObject(Object o, Class<?> collectionClazz, Class<?>... elementsClazz) {
-        String json = toJson(o);
-        return toObject(json, collectionClazz, elementsClazz);
+        if (o == null || collectionClazz == null || elementsClazz == null) {
+            return null;
+        }
+        JavaType javaType = MAPPER.getTypeFactory().constructParametricType(collectionClazz, elementsClazz);
+        return MAPPER.convertValue(o, javaType);
     }
 
     /**

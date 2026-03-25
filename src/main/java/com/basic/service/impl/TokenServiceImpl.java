@@ -2,22 +2,19 @@ package com.basic.service.impl;
 
 import com.basic.constant.AuthorizeConstants;
 import com.basic.domain.model.BasicUserDetails;
-import com.basic.domain.model.RefreshTokenInfo;
 import com.basic.domain.response.TokenResponse;
 import com.basic.property.TokenProperties;
 import com.basic.service.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,9 +26,9 @@ public class TokenServiceImpl implements TokenService {
 
     private final TokenProperties tokenProperties;
 
-    private final RedisTemplate<String, Long> blackRedisTemplate;
+    private final RedisTemplate<String, String> stringRedisTemplate;
 
-    private final RedisTemplate<String, RefreshTokenInfo> redisTemplate;
+    private final RedisTemplate<String, BasicUserDetails> userRedisTemplate;
 
     @Override
     public TokenResponse generateToken(Authentication authentication) {
@@ -40,28 +37,19 @@ public class TokenServiceImpl implements TokenService {
 
         String refreshToken = UUID.randomUUID().toString();
 
-        RefreshTokenInfo tokenInfo = new RefreshTokenInfo();
-
-        tokenInfo.setUsername(authentication.getName());
-
-        // TODO 待优化为登录用户信息缓存至Redis
-        String scope = authentication.getAuthorities()
-                .stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(" "));
-
-        tokenInfo.setScope(scope);
-
-        tokenInfo.setExpireAt(Instant.now().plusSeconds(tokenProperties.getAccessTokenExpire()));
-
         String refreshKey = AuthorizeConstants.AUTHENTICATION_PREFIX + refreshToken;
 
-        redisTemplate.opsForValue().set(
-                refreshKey,
-                tokenInfo,
-                tokenProperties.getRefreshTokenExpire(),
-                TimeUnit.DAYS
-        );
+        if (authentication.getPrincipal() instanceof BasicUserDetails userDetails) {
+            // 将用户信息存储到Redis中，方便刷新时获取
+            userRedisTemplate.opsForValue().set(
+                    refreshKey,
+                    userDetails,
+                    tokenProperties.getRefreshTokenExpire(),
+                    TimeUnit.DAYS
+            );
+        } else {
+            throw new UnsupportedOperationException("Unsupported principal type: " + authentication.getPrincipal());
+        }
 
         TokenResponse response = new TokenResponse();
 
@@ -74,30 +62,31 @@ public class TokenServiceImpl implements TokenService {
 
     private String generateAccessToken(Authentication authentication) {
 
+        String jti = UUID.randomUUID().toString();
+
         String userId;
         String subject;
         if (authentication.getPrincipal() instanceof BasicUserDetails userDetails) {
-            subject =  userDetails.getNickname();
+            subject = userDetails.getNickname();
             userId = String.valueOf(userDetails.getId());
+
+            // 缓存 jti 和 用户ID 的映射
+            stringRedisTemplate.opsForValue().set(AuthorizeConstants.JTI_USER_HASH + jti, userId, tokenProperties.getAccessTokenExpire(), TimeUnit.SECONDS);
+
+            // 将用户信息存储到Redis中，方便自省时获取
+            userRedisTemplate.opsForValue().set((AuthorizeConstants.USERINFO_PREFIX + userId), userDetails, tokenProperties.getAccessTokenExpire(), TimeUnit.SECONDS);
         } else {
-            userId = "";
-            subject = "";
+            throw new UnsupportedOperationException("Unsupported principal type: " + authentication.getPrincipal());
         }
 
         Instant now = Instant.now();
-
-        String scope = authentication.getAuthorities()
-                .stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(" "));
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer(tokenProperties.getIssuer())
                 .subject(subject)
                 .issuedAt(now)
                 .expiresAt(now.plusSeconds(tokenProperties.getAccessTokenExpire()))
-                .id(UUID.randomUUID().toString())
-                .claim(OAuth2ParameterNames.SCOPE, scope)
+                .id(jti)
                 .claim(AuthorizeConstants.CLAIM_USER_ID, userId)
                 .build();
 
@@ -109,21 +98,20 @@ public class TokenServiceImpl implements TokenService {
 
         String key = AuthorizeConstants.AUTHENTICATION_PREFIX + refreshToken;
 
-        RefreshTokenInfo tokenInfo = redisTemplate.opsForValue().get(key);
+        BasicUserDetails userDetails = userRedisTemplate.opsForValue().get(key);
 
-        if (tokenInfo == null) {
+        if (userDetails == null) {
             throw new RuntimeException("refresh token invalid");
         }
 
         // refresh token rotation
-        redisTemplate.delete(key);
+        userRedisTemplate.delete(key);
 
         Authentication authentication =
-                org.springframework.security.authentication.UsernamePasswordAuthenticationToken.authenticated(
-                        tokenInfo.getUsername(),
+                UsernamePasswordAuthenticationToken.authenticated(
+                        userDetails,
                         null,
-                        org.springframework.security.core.authority.AuthorityUtils
-                                .commaSeparatedStringToAuthorityList(tokenInfo.getScope())
+                        userDetails.getAuthorities()
                 );
 
         return generateToken(authentication);
@@ -141,9 +129,9 @@ public class TokenServiceImpl implements TokenService {
         }
         long expire = jwt.getExpiresAt().getEpochSecond() - Instant.now().getEpochSecond();
 
-        blackRedisTemplate.opsForValue().set(
+        stringRedisTemplate.opsForValue().set(
                 AuthorizeConstants.BLACKLIST_PREFIX + jti,
-                1L,
+                "1",
                 expire,
                 TimeUnit.SECONDS
         );
