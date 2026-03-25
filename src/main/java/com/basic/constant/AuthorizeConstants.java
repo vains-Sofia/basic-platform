@@ -22,6 +22,16 @@ public class AuthorizeConstants {
     public static final String AUTHENTICATION_PREFIX = BASIC_PREFIX + "authentication:";
 
     /**
+     * 用户id 与令牌唯一id的映射关系缓存key
+     */
+    public static final String JTI_USER_HASH = BASIC_PREFIX + "userinfo:jti:";
+
+    /**
+     * 用户信息缓存前缀
+     */
+    public static final String USERINFO_PREFIX = BASIC_PREFIX + "userinfo:id:";
+
+    /**
      * 黑名单列表前缀
      */
     public static final String BLACKLIST_PREFIX = BASIC_PREFIX + "blacklist:";

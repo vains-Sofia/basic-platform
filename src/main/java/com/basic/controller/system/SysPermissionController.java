@@ -84,7 +84,7 @@ public class SysPermissionController {
     @Parameter(name = "id", description = "权限 id")
     @Operation(summary = "删除权限信息", description = "删除权限信息")
     public Result<String> removeById(@NotNull @PathVariable Long id) {
-        sysPermissionService.removeById(id);
+        sysPermissionService.removeWithChildren(id);
         return Result.success();
     }
 

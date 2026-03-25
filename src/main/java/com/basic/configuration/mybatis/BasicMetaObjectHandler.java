@@ -1,4 +1,4 @@
-package com.basic.configuration;
+package com.basic.configuration.mybatis;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.basic.domain.BasicEntity;

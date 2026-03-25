@@ -1,11 +1,12 @@
 package com.basic.configuration;
 
 import com.basic.constant.AuthorizeConstants;
+import com.basic.converter.BasicJwtRedisAuthenticationConverter;
 import com.basic.filter.JwtBlacklistFilter;
 import com.basic.handler.security.LoginFailureHandler;
 import com.basic.handler.security.LoginSuccessHandler;
-import com.basic.property.CorsProperties;
 import com.basic.property.BasicLoginProperties;
+import com.basic.property.CorsProperties;
 import com.basic.service.TokenService;
 import com.basic.util.SecurityUtils;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -19,6 +20,7 @@ import com.nimbusds.jose.proc.SecurityContext;
 import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
 import com.nimbusds.jwt.proc.DefaultJWTProcessor;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -54,6 +56,7 @@ import java.util.UUID;
  *
  * @author vains
  */
+@Slf4j
 @EnableWebSecurity
 @RequiredArgsConstructor
 @Configuration(proxyBeanMethods = false)
@@ -65,6 +68,8 @@ public class SecurityConfiguration {
     private final BasicLoginProperties basicLoginProperties;
 
     private final RedisTemplate<String, Long> redisTemplate;
+
+    private final BasicJwtRedisAuthenticationConverter basicJwtRedisAuthenticationConverter;
 
     @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http, TokenService tokenService, JwtDecoder jwtDecoder) {
@@ -95,7 +100,7 @@ public class SecurityConfiguration {
                 // 添加未携带 token和权限不足异常处理
                 .accessDeniedHandler(SecurityUtils::exceptionHandler)
                 .authenticationEntryPoint(SecurityUtils::exceptionHandler)
-                .jwt(Customizer.withDefaults())
+                .jwt(jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(basicJwtRedisAuthenticationConverter))
         );
 
         // 添加黑名单过滤器

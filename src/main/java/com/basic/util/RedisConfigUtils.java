@@ -4,10 +4,11 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.experimental.UtilityClass;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.JacksonJsonRedisSerializer;
+import org.springframework.data.redis.serializer.GenericJacksonJsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.security.jackson.CoreJacksonModule;
 import org.springframework.security.jackson.SecurityJacksonModules;
+import tools.jackson.core.StreamReadFeature;
 import tools.jackson.databind.DefaultTyping;
 import tools.jackson.databind.SerializationFeature;
 import tools.jackson.databind.json.JsonMapper;
@@ -33,6 +34,8 @@ public class RedisConfigUtils {
                 DefaultTyping.NON_FINAL,
                 JsonTypeInfo.As.PROPERTY);
 
+        builder.enable(StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION);
+
         // 加载 Security提供的Module
         ClassLoader classLoader = RedisConfigUtils.class.getClassLoader();
         builder.addModules(SecurityJacksonModules.getModules(classLoader));
@@ -42,7 +45,7 @@ public class RedisConfigUtils {
     }
 
     public static RedisTemplate<Object, Object> buildRedisTemplate(RedisConnectionFactory connectionFactory,
-                                                                   JacksonJsonRedisSerializer<Object> valueSerializer) {
+                                                                   GenericJacksonJsonRedisSerializer valueSerializer) {
         // 字符串序列化器
         StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
 

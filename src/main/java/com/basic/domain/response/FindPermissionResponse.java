@@ -1,10 +1,10 @@
 package com.basic.domain.response;
 
 import com.basic.enums.PermissionTypeEnum;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import tools.jackson.databind.annotation.JsonSerialize;
+import tools.jackson.databind.ser.std.ToStringSerializer;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 @Schema(name = "FindPermissionResponse", description = "权限信息响应，包含权限的详细信息，包括路由、菜单和接口权限等配置")
 public class FindPermissionResponse implements Serializable {
 
+    @JsonSerialize(using = ToStringSerializer.class)
     @Schema(title = "主键 id", description = "权限记录的唯一标识符")
     private Long id;
 
