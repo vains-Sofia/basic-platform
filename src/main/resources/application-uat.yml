@@ -52,7 +52,6 @@ basic:
     # minio 配置
     minio:
       bucket: basic-platform
-      endpoint: http://${SERVER_URL}:9000
+      endpoint: http://minio.vains.ddns-ip.net:20000
       access-key: ${MINIO_ACCESS_KEY}
       secret-key: ${MINIO_SECRET_KEY}
-      proxy-endpoint: http://minio.vains.ddns-ip.net:20000/
