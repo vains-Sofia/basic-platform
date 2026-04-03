@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.databind.module.SimpleModule;
 
 /**
  * Jackson 自定义配置
@@ -29,6 +30,11 @@ public class JacksonCustomerConfiguration {
             builder.disable(DateTimeFeature.WRITE_DURATIONS_AS_TIMESTAMPS);
 
             builder.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+
+            // 超JS安全整数 → 转字符串，没超 → 保留原数字类型
+            SimpleModule module = new SimpleModule();
+            module.addSerializer(BigIntToStringSerializer.INSTANCE);
+            builder.addModule(module);
         };
     }
 

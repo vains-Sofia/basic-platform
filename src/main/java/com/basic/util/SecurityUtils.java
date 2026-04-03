@@ -34,9 +34,9 @@ import java.util.Map;
 public class SecurityUtils {
 
     /**
-     * 获取当前登录用户的 id
+     * 获取当前登录用户
      *
-     * @return 当前登录用户的 id
+     * @return 当前登录用户
      */
     public static BasicUserDetails getLoginUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

@@ -3,8 +3,6 @@ package com.basic.domain.response;
 import com.basic.enums.PermissionTypeEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import tools.jackson.databind.annotation.JsonSerialize;
-import tools.jackson.databind.ser.std.ToStringSerializer;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -18,7 +16,6 @@ import java.time.LocalDateTime;
 @Schema(name = "FindPermissionResponse", description = "权限信息响应，包含权限的详细信息，包括路由、菜单和接口权限等配置")
 public class FindPermissionResponse implements Serializable {
 
-    @JsonSerialize(using = ToStringSerializer.class)
     @Schema(title = "主键 id", description = "权限记录的唯一标识符")
     private Long id;
 
@@ -49,7 +46,6 @@ public class FindPermissionResponse implements Serializable {
     @Schema(title = "是否需要鉴权", description = "标识该权限是否需要进行认证", example = "true")
     private Boolean needAuthentication;
 
-    @JsonSerialize(using = ToStringSerializer.class)
     @Schema(title = "父节点 id", description = "权限树结构中的父级权限ID，用于构建权限层级关系")
     private Long parentId;
 

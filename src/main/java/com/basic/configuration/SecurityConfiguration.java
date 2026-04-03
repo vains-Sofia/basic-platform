@@ -2,7 +2,6 @@ package com.basic.configuration;
 
 import com.basic.constant.AuthorizeConstants;
 import com.basic.converter.BasicJwtRedisAuthenticationConverter;
-import com.basic.filter.JwtBlacklistFilter;
 import com.basic.handler.security.LoginFailureHandler;
 import com.basic.handler.security.LoginSuccessHandler;
 import com.basic.property.BasicLoginProperties;
@@ -23,13 +22,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,7 +36,6 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
-import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -67,15 +65,19 @@ public class SecurityConfiguration {
 
     private final BasicLoginProperties basicLoginProperties;
 
-    private final RedisTemplate<String, Long> redisTemplate;
-
     private final BasicJwtRedisAuthenticationConverter basicJwtRedisAuthenticationConverter;
 
     @Bean
-    public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http, TokenService tokenService, JwtDecoder jwtDecoder) {
+    public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http, TokenService tokenService) {
         // 禁用 csrf 与 cors
         http.cors(Customizer.withDefaults());
         http.csrf(AbstractHttpConfigurer::disable);
+
+        // 允许 嵌入IFrame
+        http.headers(headers ->
+                // 仅允许同源
+                headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
+        );
 
         // Form login handles the redirect to the login page from the
         // authorization server filter chain
@@ -102,10 +104,6 @@ public class SecurityConfiguration {
                 .authenticationEntryPoint(SecurityUtils::exceptionHandler)
                 .jwt(jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(basicJwtRedisAuthenticationConverter))
         );
-
-        // 添加黑名单过滤器
-        JwtBlacklistFilter jwtBlacklistFilter = new JwtBlacklistFilter(jwtDecoder, redisTemplate);
-        http.addFilterBefore(jwtBlacklistFilter, BearerTokenAuthenticationFilter.class);
 
         // 禁用 Session
         http.sessionManagement(session -> session

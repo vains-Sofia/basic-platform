@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.3</version>
+        <version>4.0.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.basic.test</groupId>
@@ -20,11 +20,11 @@
         <!-- 指定 Java 版本 -->
         <java.version>25</java.version>
         <!-- 指定 MinIO 版本 -->
-        <minio.version>8.6.0</minio.version>
+        <minio.version>9.0.0</minio.version>
         <!-- Redisson 版本号 -->
-        <redisson.version>4.2.0</redisson.version>
+        <redisson.version>4.3.0</redisson.version>
         <!-- Spring Doc 版本号 -->
-        <spring-doc.version>3.0.1</spring-doc.version>
+        <spring-doc.version>3.0.2</spring-doc.version>
         <!-- Mybatis Plus 版本号 -->
         <mybatis-plus.version>3.5.16</mybatis-plus.version>
     </properties>

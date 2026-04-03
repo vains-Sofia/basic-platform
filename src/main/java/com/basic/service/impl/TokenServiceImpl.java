@@ -5,24 +5,28 @@ import com.basic.domain.model.BasicUserDetails;
 import com.basic.domain.response.TokenResponse;
 import com.basic.property.TokenProperties;
 import com.basic.service.TokenService;
+import com.basic.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.jwt.*;
+import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
+import org.springframework.security.oauth2.server.resource.InvalidBearerTokenException;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TokenServiceImpl implements TokenService {
 
     private final JwtEncoder jwtEncoder;
-
-    private final JwtDecoder jwtDecoder;
 
     private final TokenProperties tokenProperties;
 
@@ -118,22 +122,15 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public void revokeToken(String accessToken) {
-
-        Jwt jwt = jwtDecoder.decode(accessToken);
-
-        String jti = jwt.getId();
-
-        if (jwt.getExpiresAt() == null || jwt.getExpiresAt().isBefore(Instant.now())) {
-            return;
+    public void revokeToken() {
+        // 当前登录用户
+        BasicUserDetails loginUser = SecurityUtils.getLoginUser();
+        if (loginUser == null) {
+            throw new InvalidBearerTokenException("Invalid token");
         }
-        long expire = jwt.getExpiresAt().getEpochSecond() - Instant.now().getEpochSecond();
 
-        stringRedisTemplate.opsForValue().set(
-                AuthorizeConstants.BLACKLIST_PREFIX + jti,
-                "1",
-                expire,
-                TimeUnit.SECONDS
-        );
+        // 清除 token 对应的缓存
+        userRedisTemplate.delete(AuthorizeConstants.USERINFO_PREFIX + loginUser.getId());
+
     }
 }
