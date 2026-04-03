@@ -25,6 +25,6 @@ public class SysDictTypeRequest {
     @Schema(title = "字典类型描述", description = "字典类型描述")
     private String description;
 
-    @Schema(title = "状态")
+    @Schema
     private StatusEnum status = StatusEnum.ENABLE;
 }

@@ -14,13 +14,13 @@ import java.io.Serializable;
 @Schema(name = "FilePreSignedResponse", description = "文件预签名响应")
 public class FilePreSignedResponse implements Serializable {
 
-    @Schema(title = "文件唯一标识")
+    @Schema(description = "文件唯一标识")
     private String name;
 
-    @Schema(title = "文件访问地址")
+    @Schema(description = "文件访问地址")
     private String url;
 
-    @Schema(title = "文件所在的存储桶")
+    @Schema(description = "文件所在的存储桶")
     private String bucket;
 
 }

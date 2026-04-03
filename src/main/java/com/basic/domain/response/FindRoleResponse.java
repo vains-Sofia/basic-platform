@@ -45,16 +45,16 @@ public class FindRoleResponse implements Serializable {
     @Schema(title = "是否已删除", description = "是否已删除")
     private Integer deleted;
 
-    @Schema(title = "创建人名称")
+    @Schema(description = "创建人名称")
     private String createName;
 
-    @Schema(title = "修改人名称")
+    @Schema(description = "修改人名称")
     private String updateName;
 
-    @Schema(title = "创建时间")
+    @Schema(description = "创建时间")
     private LocalDateTime createTime;
 
-    @Schema(title = "修改时间")
+    @Schema(description = "修改时间")
     private LocalDateTime updateTime;
 
 }

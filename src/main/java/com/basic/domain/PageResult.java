@@ -18,10 +18,10 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class PageResult<T> extends BasicPageable {
 
-    @Schema(title = "总条数")
+    @Schema(description = "总条数")
     private Long total;
 
-    @Schema(title = "分页数据")
+    @Schema(description = "分页数据")
     private List<T> records;
 
     public PageResult(Long current, Long size, Long total, List<T> records) {
