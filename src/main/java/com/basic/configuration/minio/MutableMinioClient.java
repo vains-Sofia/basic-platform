@@ -2,11 +2,7 @@ package com.basic.configuration.minio;
 
 import io.minio.GetPresignedObjectUrlArgs;
 import io.minio.MinioClient;
-import io.minio.errors.*;
-
-import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
+import io.minio.errors.MinioException;
 
 /**
  * 可变端点的 Minio客户端
@@ -23,9 +19,7 @@ public class MutableMinioClient extends MinioClient {
     }
 
     @Override
-    public String getPresignedObjectUrl(GetPresignedObjectUrlArgs args)
-            throws ServerException, InsufficientDataException, ErrorResponseException, IOException,
-            NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
+    public String getPresignedObjectUrl(GetPresignedObjectUrlArgs args) throws MinioException {
         return asyncClient.getPresignedObjectUrl(args);
     }
 }

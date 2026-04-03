@@ -6,11 +6,7 @@ import com.basic.exception.CloudServiceException;
 import com.basic.property.StorageProperty;
 import com.basic.service.FileService;
 import com.basic.util.ServletUtils;
-import io.minio.BucketExistsArgs;
-import io.minio.GetPresignedObjectUrlArgs;
-import io.minio.MakeBucketArgs;
-import io.minio.MinioClient;
-import io.minio.http.Method;
+import io.minio.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -55,16 +51,16 @@ public class MinioFileServiceImpl implements FileService {
 
             // 根据当前请求的 HttpMethod 来判断是上传还是下载还是删除
             HttpMethod httpMethod = HttpMethod.valueOf(httpRequest.getMethod());
-            Method method;
+            Http.Method method;
             if (httpMethod == HttpMethod.PUT) {
                 // 上传文件
-                method = Method.PUT;
+                method = Http.Method.PUT;
             } else if (httpMethod == HttpMethod.DELETE) {
                 // 删除文件
-                method = Method.DELETE;
+                method = Http.Method.DELETE;
             } else if (httpMethod == HttpMethod.GET) {
                 // 下载文件
-                method = Method.GET;
+                method = Http.Method.GET;
             } else {
                 log.error("不支持的请求方法: {}", httpMethod);
                 throw new CloudServiceException("不支持的请求方法: " + httpMethod);
