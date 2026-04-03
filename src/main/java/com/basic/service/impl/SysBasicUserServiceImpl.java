@@ -18,6 +18,7 @@ import com.basic.enums.OAuth2AccountPlatformEnum;
 import com.basic.exception.CloudIllegalArgumentException;
 import com.basic.mapper.SysBasicUserMapper;
 import com.basic.mapper.SysUserRoleMapper;
+import com.basic.service.FileService;
 import com.basic.service.SysBasicUserService;
 import com.basic.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ import org.springframework.util.ObjectUtils;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -40,6 +42,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class SysBasicUserServiceImpl extends ServiceImpl<SysBasicUserMapper, SysBasicUser>
         implements SysBasicUserService {
+
+    private final FileService fileService;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -104,6 +108,13 @@ public class SysBasicUserServiceImpl extends ServiceImpl<SysBasicUserMapper, Sys
                 // 不修改
                 if (ObjectUtils.isEmpty(request.getPicture())) {
                     sysBasicUser.setPicture(existsBasicUser.getPicture());
+                } else {
+                    // 修改了头像，需要移除旧的头像
+                    if (!Objects.equals(request.getPicture(), existsBasicUser.getPicture())) {
+                        if (!ObjectUtils.isEmpty(existsBasicUser.getPicture())) {
+                            fileService.deleteByFileUrl(existsBasicUser.getPicture());
+                        }
+                    }
                 }
                 sysBasicUser.setDeleted(existsBasicUser.getDeleted());
                 sysBasicUser.setPassword(existsBasicUser.getPassword());

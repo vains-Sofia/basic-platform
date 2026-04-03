@@ -17,4 +17,11 @@ public interface FileService {
      * @return 文件预签名响应
      */
     FilePreSignedResponse filePreSigned(FilePreSignedRequest request);
+
+    /**
+     * 根据 文件URL 删除对象存储中的文件
+     *
+     * @param fileUrl 完整的文件地址
+     */
+    void deleteByFileUrl(String fileUrl);
 }
