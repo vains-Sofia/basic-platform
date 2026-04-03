@@ -57,7 +57,9 @@ public class MutableMinioAsyncClient extends MinioAsyncClient {
                 builder = url.newBuilder(url.toString().replace(baseUrl.toString(), proxyEndpoint.concat("/")));
             }
             if (builder != null) {
-                proxyBaseUrl = new Http.BaseUrl(builder.build());
+                HttpUrl build = builder.build();
+                String base = build.scheme() + "://" + build.host();
+                proxyBaseUrl = new Http.BaseUrl(base);
             } else {
                 proxyBaseUrl = baseUrl;
             }
