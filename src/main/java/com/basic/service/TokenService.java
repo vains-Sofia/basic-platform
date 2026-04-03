@@ -11,15 +11,24 @@ import org.springframework.security.core.Authentication;
 public interface TokenService {
 
     /**
-     * 构建token响应bean
+     * 构建token 响应bean
      *
-     * @param authentication     当前认证信息
-     * @return token响应bean
+     * @param authentication 当前认证信息
+     * @return token 响应bean
      */
     TokenResponse generateToken(Authentication authentication);
 
+    /**
+     * 通过 Refresh Token刷新token
+     *
+     * @param refreshToken Refresh Token
+     * @return 新的 token
+     */
     TokenResponse refreshToken(String refreshToken);
 
-    void revokeToken(String accessToken);
+    /**
+     * 退出登录时 撤销token
+     */
+    void revokeToken();
 
 }

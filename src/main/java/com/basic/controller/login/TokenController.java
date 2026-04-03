@@ -1,10 +1,14 @@
 package com.basic.controller.login;
 
+import com.basic.domain.Result;
 import com.basic.domain.response.TokenResponse;
 import com.basic.service.TokenService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * token接口
@@ -26,11 +30,9 @@ public class TokenController {
     }
 
     @PostMapping("/logout")
-    public void logout(@RequestHeader("Authorization") String auth) {
-
-        String token = auth.replace("Bearer ", "");
-
-        tokenService.revokeToken(token);
+    public Result<String> logout() {
+        tokenService.revokeToken();
+        return Result.success("退出登录成功.");
     }
 
 

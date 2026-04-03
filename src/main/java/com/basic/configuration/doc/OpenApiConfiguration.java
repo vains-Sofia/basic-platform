@@ -1,7 +1,5 @@
-package com.basic.configuration;
+package com.basic.configuration.doc;
 
-import com.basic.configuration.doc.ApiEnumParameterCustomizer;
-import com.basic.configuration.doc.ApiEnumPropertyCustomizer;
 import com.basic.property.DocProperties;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
