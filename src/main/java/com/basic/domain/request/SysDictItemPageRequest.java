@@ -22,6 +22,6 @@ public class SysDictItemPageRequest extends BasicPageable {
     @Schema(title = "模糊查询 itemKey 或 itemValue", description = "模糊查询 itemKey 或 itemValue")
     private String keyword;
 
-    @Schema(title = "状态", description = "状态（Y=启用，N=禁用）")
+    @Schema
     private StatusEnum status;
 }

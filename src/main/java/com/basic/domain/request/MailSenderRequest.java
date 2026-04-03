@@ -22,40 +22,40 @@ public class MailSenderRequest implements Serializable {
     /**
      * 发送者
      */
-    @Schema(title = "发送者")
+    @Schema(description = "发送者")
     private String from;
 
     /**
      * 接收者
      */
     @NotEmpty
-    @Schema(title = "接收者")
+    @Schema(description = "接收者")
     private Set<String> mailTo;
 
     /**
      * 邮件主题
      */
     @NotBlank
-    @Schema(title = "邮件主题")
+    @Schema(description = "邮件主题")
     private String subject;
 
     /**
      * 邮件内容
      */
     @NotBlank
-    @Schema(title = "邮件内容")
+    @Schema(description = "邮件内容")
     private String content;
 
     /**
      * 邮件内容是否为 html
      */
-    @Schema(title = "邮件内容是否为 html")
+    @Schema(description = "邮件内容是否为 html")
     private Boolean contentIsHtml = false;
 
     /**
      * 附件
      */
-    @Schema(title = "附件")
+    @Schema(description = "附件")
     private List<MultipartFile> attachments;
 
 }

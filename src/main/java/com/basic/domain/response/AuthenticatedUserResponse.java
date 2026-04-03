@@ -20,13 +20,13 @@ public class AuthenticatedUserResponse extends FindBasicUserResponse {
     /**
      * 角色列表
      */
-    @Schema(title = "角色列表")
+    @Schema(description = "角色列表")
     private List<String> roles;
 
     /**
      * 权限列表
      */
-    @Schema(title = "权限列表")
+    @Schema(description = "权限列表")
     private Set<GrantedAuthority> authorities;
 
 }

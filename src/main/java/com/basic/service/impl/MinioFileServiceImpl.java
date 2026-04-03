@@ -14,6 +14,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import java.net.URI;
+
 /**
  * 文件相关操作 MinIO 实现
  *
@@ -86,6 +88,44 @@ public class MinioFileServiceImpl implements FileService {
         } catch (Exception e) {
             log.error("获取预签名失败，原因：{}", e.getMessage(), e);
             throw new CloudServiceException(e.getMessage());
+        }
+    }
+
+    @Override
+    public void deleteByFileUrl(String fileUrl) {
+        // 空值判断
+        if (ObjectUtils.isEmpty(fileUrl)) {
+            return;
+        }
+
+        try {
+            // 1. 解析URL
+            URI uri = new URI(fileUrl);
+            // 截取路径部分：/桶名/对象路径
+            String path = uri.getPath();
+            // 分割路径（示例：/user-avatar/a/b.png → [, user-avatar, a, b.png]）
+            String[] pathParts = path.split("/", 3);
+
+            if (pathParts.length < 3) {
+                return;
+            }
+
+            // 2. 提取桶名 + 对象名
+            String bucketName = pathParts[1];
+            String objectName = pathParts[2];
+
+            // 3. 调用MinIO删除旧文件
+            minioClient.removeObject(
+                    RemoveObjectArgs.builder()
+                            .bucket(bucketName)
+                            .object(objectName)
+                            .build()
+            );
+
+            log.info("文件【{}】删除成功.", fileUrl);
+        } catch (Exception e) {
+            // 删除失败不影响主流程（打印日志即可）
+            log.warn("文件【{}】删除失败, 原因: {}", fileUrl, e.getMessage());
         }
     }
 }
