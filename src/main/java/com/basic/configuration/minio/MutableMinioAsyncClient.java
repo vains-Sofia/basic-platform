@@ -5,7 +5,6 @@ import io.minio.Http;
 import io.minio.MinioAsyncClient;
 import io.minio.credentials.Credentials;
 import io.minio.errors.MinioException;
-import okhttp3.HttpUrl;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.concurrent.CompletionException;
@@ -46,22 +45,13 @@ public class MutableMinioAsyncClient extends MinioAsyncClient {
             queryParams.put("X-Amz-Security-Token", credentials.sessionToken());
         }
 
-        HttpUrl url = baseUrl.buildUrl(args.method(), args.bucket(), args.object(), region, queryParams);
         Http.BaseUrl proxyBaseUrl;
         // 重点：修改url
         if (StringUtils.isNotBlank(proxyEndpoint)) {
-            HttpUrl.Builder builder;
             if (proxyEndpoint.endsWith("/")) {
-                builder = url.newBuilder(url.toString().replace(baseUrl.toString(), proxyEndpoint));
+                proxyBaseUrl = new Http.BaseUrl(proxyEndpoint);
             } else {
-                builder = url.newBuilder(url.toString().replace(baseUrl.toString(), proxyEndpoint.concat("/")));
-            }
-            if (builder != null) {
-                HttpUrl build = builder.build();
-                String base = build.scheme() + "://" + build.host();
-                proxyBaseUrl = new Http.BaseUrl(base);
-            } else {
-                proxyBaseUrl = baseUrl;
+                proxyBaseUrl = new Http.BaseUrl(proxyEndpoint + "/");
             }
         } else {
             proxyBaseUrl = baseUrl;
