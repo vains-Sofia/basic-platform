@@ -25,6 +25,12 @@ public class TokenProperties {
     private long refreshTokenExpire;
 
     /**
+     * Refresh Token 绝对过期时间（天）
+     * 无论怎么刷新，到这个时间必须重新登录
+     */
+    private Long refreshTokenAbsoluteExpire = 30L;
+
+    /**
      * jwt issuer
      */
     private String issuer;

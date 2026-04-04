@@ -1,14 +1,13 @@
 package com.basic.controller.login;
 
 import com.basic.domain.Result;
+import com.basic.domain.request.RefreshTokenRequest;
 import com.basic.domain.response.TokenResponse;
 import com.basic.service.TokenService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * token接口
@@ -24,9 +23,9 @@ public class TokenController {
     private final TokenService tokenService;
 
     @PostMapping("/refresh")
-    public TokenResponse refresh(@RequestParam String refreshToken) {
+    public TokenResponse refresh(@RequestBody @Valid RefreshTokenRequest request) {
 
-        return tokenService.refreshToken(refreshToken);
+        return tokenService.refreshToken(request.getRefreshToken());
     }
 
     @PostMapping("/logout")

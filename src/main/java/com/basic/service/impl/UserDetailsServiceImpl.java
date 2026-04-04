@@ -18,6 +18,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -55,6 +56,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         SysBasicUser sysBasicUser = basicUsers.getFirst();
         BasicUserDetails userDetails = new BasicUserDetails();
         BeanUtils.copyProperties(sysBasicUser, userDetails);
+        userDetails.setAuthorities(new HashSet<>());
 
         // 查询用户权限列表
         List<SysPermission> permissions = sysPermissionService.findPermissionsByUserId(sysBasicUser.getId());
