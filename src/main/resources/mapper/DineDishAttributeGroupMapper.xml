@@ -8,7 +8,7 @@
             <id property="id" column="id" jdbcType="BIGINT"/>
             <result property="dishId" column="dish_id" jdbcType="BIGINT"/>
             <result property="groupId" column="group_id" jdbcType="BIGINT"/>
-            <result property="isRequired" column="is_required" jdbcType="TINYINT"/>
+            <result property="required" column="required" jdbcType="TINYINT"/>
             <result property="sort" column="sort" jdbcType="INTEGER"/>
             <result property="createBy" column="create_by" jdbcType="BIGINT"/>
             <result property="updateBy" column="update_by" jdbcType="BIGINT"/>
