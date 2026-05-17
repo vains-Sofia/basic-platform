@@ -18,7 +18,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-@Schema(title = "接口统一响应实体", description = "接口统一响应实体")
+@Schema(title = "Result", description = "接口统一响应实体")
 public class Result<T> implements Serializable {
 
     /**

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.basic.mapper.DineDishMapper">
+
+    <resultMap id="BaseResultMap" type="com.basic.domain.entity.DineDish">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="storeId" column="store_id" jdbcType="BIGINT"/>
+            <result property="categoryId" column="category_id" jdbcType="BIGINT"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="image" column="image" jdbcType="VARCHAR"/>
+            <result property="images" column="images" jdbcType="VARCHAR" typeHandler="com.basic.handler.mybatis.StringListTypeHandler"/>
+            <result property="description" column="description" jdbcType="VARCHAR"/>
+            <result property="price" column="price" jdbcType="INTEGER"/>
+            <result property="labels" column="labels" jdbcType="VARCHAR" typeHandler="com.basic.handler.mybatis.StringListTypeHandler"/>
+            <result property="recommend" column="recommend" jdbcType="TINYINT"/>
+            <result property="cookingTime" column="cooking_time" jdbcType="INTEGER"/>
+            <result property="unit" column="unit" jdbcType="VARCHAR"/>
+            <result property="sales" column="sales" jdbcType="INTEGER"/>
+            <result property="status" column="status" jdbcType="TINYINT"/>
+            <result property="sort" column="sort" jdbcType="INTEGER"/>
+            <result property="createBy" column="create_by" jdbcType="BIGINT"/>
+            <result property="updateBy" column="update_by" jdbcType="BIGINT"/>
+            <result property="createName" column="create_name" jdbcType="VARCHAR"/>
+            <result property="updateName" column="update_name" jdbcType="VARCHAR"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,store_id,category_id,
+        name,image,images,
+        description,price,labels,
+        recommend,cooking_time,unit,
+        sales,status,sort,
+        create_by,update_by,create_name,
+        update_name,create_time,update_time
+    </sql>
+</mapper>

@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/common")
-@Tag(name = "通用功能接口", description = "通用功能接口")
+@Tag(name = "公共-通用功能接口", description = "通用功能接口")
 public class CommonController {
 
     private final CommonService commonService;

@@ -135,7 +135,7 @@ public class SysPermissionServiceImpl extends ServiceImpl<SysPermissionMapper, S
         // 插入时初始化
         if (!hasId) {
             // 初始化默认信息
-            permission.setDeleted(0);
+            permission.setDeleted(Boolean.FALSE);
         } else {
             // 设置插入相关的审计信息
             Optional<SysPermission> permissionOptional = this.getOptById(request.getId());
@@ -149,7 +149,7 @@ public class SysPermissionServiceImpl extends ServiceImpl<SysPermissionMapper, S
 
         // 默认设置不删除
         if (permission.getDeleted() == null) {
-            permission.setDeleted(0);
+            permission.setDeleted(Boolean.FALSE);
         }
         this.saveOrUpdate(permission);
 
@@ -205,7 +205,7 @@ public class SysPermissionServiceImpl extends ServiceImpl<SysPermissionMapper, S
             BeanUtils.copyProperties(request, permission);
             // 如果是新增
             if (request.getId() == null) {
-                permission.setDeleted(0);
+                permission.setDeleted(Boolean.FALSE);
             } else {
                 // 如果是修改，则保留原有的创建信息
                 Optional<SysPermission> existingPermission = this.getOptById(request.getId());
@@ -217,7 +217,7 @@ public class SysPermissionServiceImpl extends ServiceImpl<SysPermissionMapper, S
             }
             // 默认设置不删除
             if (permission.getDeleted() == null) {
-                permission.setDeleted(0);
+                permission.setDeleted(Boolean.FALSE);
             }
             return permission;
         }).toList();

@@ -30,7 +30,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/permission")
-@Tag(name = "RBAC 权限相关接口", description = "RBAC 权限相关接口")
+@Tag(name = "RBAC-权限相关接口", description = "RBAC 权限相关接口")
 public class SysPermissionController {
 
     private final SysPermissionService sysPermissionService;

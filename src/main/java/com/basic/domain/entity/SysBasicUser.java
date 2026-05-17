@@ -92,7 +92,7 @@ public class SysBasicUser extends BasicEntity {
      * 是否已删除
      */
     @TableLogic
-    private Integer deleted;
+    private Boolean deleted;
 
     /**
      * 用户来源

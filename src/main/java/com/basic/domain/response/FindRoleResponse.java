@@ -43,7 +43,7 @@ public class FindRoleResponse implements Serializable {
      * 是否已删除
      */
     @Schema(title = "是否已删除", description = "是否已删除")
-    private Integer deleted;
+    private Boolean deleted;
 
     @Schema(description = "创建人名称")
     private String createName;

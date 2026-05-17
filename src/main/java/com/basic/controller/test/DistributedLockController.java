@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @RestController
-@Tag(name = "分布式锁测试接口")
+@Tag(name = "测试-分布式锁测试接口")
 @RequestMapping("/redis/lock")
 public class DistributedLockController {
 

@@ -130,7 +130,7 @@ public class SysBasicUserServiceImpl extends ServiceImpl<SysBasicUserMapper, Sys
         }
 
         // 初始化默认信息
-        sysBasicUser.setDeleted(0);
+        sysBasicUser.setDeleted(Boolean.FALSE);
         sysBasicUser.setEmailVerified(Boolean.FALSE);
         if (sysBasicUser.getAccountPlatform() == null) {
             sysBasicUser.setAccountPlatform(OAuth2AccountPlatformEnum.SYSTEM);

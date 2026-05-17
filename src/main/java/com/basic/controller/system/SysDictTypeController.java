@@ -28,7 +28,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/dict/type")
-@Tag(name = "字典 api 接口", description = "字典类型、字典项接口")
+@Tag(name = "字典-字典相关 api 接口", description = "字典类型、字典项接口")
 public class SysDictTypeController {
 
     private final SysDictTypeService sysDictTypeService;

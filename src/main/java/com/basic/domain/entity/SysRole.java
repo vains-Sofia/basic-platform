@@ -42,6 +42,6 @@ public class SysRole extends BasicEntity {
      * 是否已删除
      */
     @TableLogic
-    private Integer deleted;
+    private Boolean deleted;
 
 }

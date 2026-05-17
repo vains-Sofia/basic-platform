@@ -16,7 +16,7 @@ import java.io.Serializable;
  * @author vains
  */
 @Data
-@Schema(name = "保存或修改权限信息入参", description = "保存或修改权限信息入参")
+@Schema(name = "SavePermissionRequest", description = "保存或修改权限信息入参")
 public class SavePermissionRequest implements Serializable {
 
     /**

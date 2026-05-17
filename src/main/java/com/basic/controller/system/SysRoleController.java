@@ -29,7 +29,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/role")
-@Tag(name = "RBAC 角色相关接口", description = "RBAC 角色相关接口")
+@Tag(name = "RBAC-角色相关接口", description = "RBAC 角色相关接口")
 public class SysRoleController {
 
     private final SysRoleService sysRoleService;

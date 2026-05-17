@@ -24,7 +24,7 @@ import static com.basic.constant.AuthorizeConstants.BASIC_PREFIX;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/test01")
-@Tag(name = "测试接口", description = "测试接口")
+@Tag(name = "测试-测试接口", description = "测试接口")
 public class Test01Controller {
 
     private final SysDictTypeService sysDictTypeService;

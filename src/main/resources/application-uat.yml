@@ -17,6 +17,9 @@ spring:
 
 springdoc:
   show-login-endpoint: true
+  swagger-ui:
+    tags-sorter: alpha
+    operations-sorter: alpha
 server:
   port: 10000
   tomcat:

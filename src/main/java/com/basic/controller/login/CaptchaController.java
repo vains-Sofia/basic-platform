@@ -29,7 +29,7 @@ import java.util.Set;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/captcha")
-@Tag(name = "验证码接口", description = "验证码接口")
+@Tag(name = "登录-验证码接口", description = "验证码接口")
 public class CaptchaController {
 
     private final CommonService commonService;

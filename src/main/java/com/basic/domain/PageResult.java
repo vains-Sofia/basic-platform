@@ -14,8 +14,8 @@ import java.util.List;
  */
 @Data
 @NoArgsConstructor
-@Schema(title = "分页请求出参")
 @EqualsAndHashCode(callSuper = true)
+@Schema(title = "PageResult", description = "分页请求出参")
 public class PageResult<T> extends BasicPageable {
 
     @Schema(description = "总条数")

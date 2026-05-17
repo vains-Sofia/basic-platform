@@ -19,6 +19,9 @@ spring:
 springdoc:
   # 是否显示登录接口
   show-login-endpoint: true
+  swagger-ui:
+    tags-sorter: alpha
+    operations-sorter: alpha
 
 server:
   port: 9998

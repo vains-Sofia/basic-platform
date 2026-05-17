@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/file")
-@Tag(name = "文件接口", description = "文件接口")
+@Tag(name = "公共-文件接口", description = "文件接口")
 public class FileController {
 
     private final FileService fileService;

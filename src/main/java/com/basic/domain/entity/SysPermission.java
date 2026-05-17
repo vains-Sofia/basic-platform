@@ -65,7 +65,7 @@ public class SysPermission extends BasicEntity {
     /**
      * 是否需要鉴权
      */
-    private Integer needAuthentication;
+    private Boolean needAuthentication;
 
     /**
      * 父节点 ID
@@ -86,7 +86,7 @@ public class SysPermission extends BasicEntity {
      * 是否已删除
      */
     @TableLogic
-    private Integer deleted;
+    private Boolean deleted;
 
     /**
      * 菜单图标

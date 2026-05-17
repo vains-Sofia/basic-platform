@@ -95,7 +95,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole>
         if (!hasId) {
             BeanUtils.copyProperties(request, role);
             // 初始化默认信息
-            role.setDeleted(0);
+            role.setDeleted(Boolean.FALSE);
         } else {
             // 设置插入相关的审计信息
             Optional<SysRole> roleOptional = this.getOptById(request.getId());
