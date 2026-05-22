@@ -12,6 +12,7 @@ import com.basic.domain.entity.DineDishAttributeOption;
 import com.basic.domain.request.DineAttributeOptionPageRequest;
 import com.basic.domain.request.DineAttributeOptionRequest;
 import com.basic.domain.response.FindDineAttributeOptionResponse;
+import com.basic.enums.StatusEnum;
 import com.basic.exception.CloudServiceException;
 import com.basic.mapper.DineAttributeGroupMapper;
 import com.basic.mapper.DineAttributeOptionMapper;
@@ -115,6 +116,31 @@ public class DineAttributeOptionServiceImpl extends ServiceImpl<DineAttributeOpt
         if (log.isDebugEnabled()) {
             log.debug("删除订单属性选项，ID：{}，名称：{}", id, entity.getName());
         }
+    }
+
+    @Override
+    public List<FindDineAttributeOptionResponse> listByGroup(String groupId) {
+        // 验证属性组是否存在
+        LambdaQueryWrapper<DineAttributeGroup> wrapper = Wrappers.lambdaQuery(DineAttributeGroup.class)
+                .eq(DineAttributeGroup::getId, groupId);
+        DineAttributeGroup dineAttributeGroup = dineAttributeGroupMapper.selectOne(wrapper);
+        if (dineAttributeGroup == null) {
+            throw new CloudServiceException("属性组不存在，属性组ID：" + groupId);
+        }
+
+        LambdaQueryWrapper<DineAttributeOption> optionWrapper = Wrappers.lambdaQuery(DineAttributeOption.class)
+                .eq(DineAttributeOption::getStatus, StatusEnum.ENABLE)
+                .eq(DineAttributeOption::getGroupId, dineAttributeGroup.getId())
+                .orderByDesc(DineAttributeOption::getSort);
+
+        List<DineAttributeOption> optionList = this.list(optionWrapper);
+
+        return optionList.stream()
+                .map(e -> {
+                    FindDineAttributeOptionResponse response = new FindDineAttributeOptionResponse();
+                    BeanUtils.copyProperties(e, response);
+                    return response;
+                }).toList();
     }
 
     private void validateAttributeOption(DineAttributeOptionRequest request, Long excludeId, DineAttributeOption existing) {

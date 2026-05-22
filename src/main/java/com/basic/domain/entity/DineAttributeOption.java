@@ -37,7 +37,7 @@ public class DineAttributeOption extends BasicEntity {
     /**
      * 价格调整(分)，可为负数
      */
-    private Integer priceAdjustment;
+    private Long priceAdjustment;
 
     /**
      * 排序

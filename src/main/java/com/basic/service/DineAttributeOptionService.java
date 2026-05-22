@@ -7,6 +7,7 @@ import com.basic.domain.request.DineAttributeOptionPageRequest;
 import com.basic.domain.request.DineAttributeOptionRequest;
 import com.basic.domain.response.FindDineAttributeOptionResponse;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
@@ -32,6 +33,7 @@ public interface DineAttributeOptionService extends IService<DineAttributeOption
      * @return 分页结果
      */
     PageResult<FindDineAttributeOptionResponse> pageQuery(@Valid DineAttributeOptionPageRequest request);
+
     /**
      * 创建订单属性选项
      *
@@ -55,4 +57,12 @@ public interface DineAttributeOptionService extends IService<DineAttributeOption
      * @param id 订单属性选项ID
      */
     void delete(Long id);
+
+    /**
+     * 根据属性组编码获取属性列表
+     *
+     * @param groupId 属性组ID
+     * @return 属性列表
+     */
+    List<FindDineAttributeOptionResponse> listByGroup(@NotBlank String groupId);
 }

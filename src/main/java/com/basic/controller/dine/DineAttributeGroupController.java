@@ -22,7 +22,7 @@ import java.util.List;
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/order/attribute/group")
+@RequestMapping("/attribute/group")
 @Tag(name = "点单-属性组", description = "属性组相关 api 接口")
 public class DineAttributeGroupController {
 

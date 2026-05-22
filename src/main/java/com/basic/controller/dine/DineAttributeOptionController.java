@@ -11,6 +11,7 @@ import com.basic.service.DineAttributeOptionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -22,7 +23,7 @@ import java.util.List;
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/order/attribute/option")
+@RequestMapping("/attribute/option")
 @Tag(name = "点单-属性选项 api 接口", description = "属性选项相关接口")
 public class DineAttributeOptionController {
 
@@ -39,6 +40,13 @@ public class DineAttributeOptionController {
     @Operation(summary = "分页查询属性选项", description = "分页查询属性选项")
     public Result<PageResult<FindDineAttributeOptionResponse>> pageQuery(@Valid DineAttributeOptionPageRequest request) {
         PageResult<FindDineAttributeOptionResponse> responses = dineAttributeOptionService.pageQuery(request);
+        return Result.success(responses);
+    }
+
+    @GetMapping("/group/{groupId}")
+    @Operation(summary = "根据字典类型ID查询字典项", description = "根据字典类型ID查询字典项")
+    public Result<List<FindDineAttributeOptionResponse>> listByGroup(@PathVariable @NotBlank String groupId) {
+        List<FindDineAttributeOptionResponse> responses = dineAttributeOptionService.listByGroup(groupId);
         return Result.success(responses);
     }
 

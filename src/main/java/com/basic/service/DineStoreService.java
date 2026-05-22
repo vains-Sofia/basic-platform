@@ -5,7 +5,7 @@ import com.basic.domain.PageResult;
 import com.basic.domain.entity.DineStore;
 import com.basic.domain.request.DineStorePageRequest;
 import com.basic.domain.request.DineStoreRequest;
-import com.basic.domain.response.FindDineInfoResponse;
+import com.basic.domain.response.FindDineStoreResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
@@ -23,7 +23,7 @@ public interface DineStoreService extends IService<DineStore> {
      *
      * @return 店铺信息列表
      */
-    List<FindDineInfoResponse> listAll();
+    List<FindDineStoreResponse> listAll();
 
     /**
      * 分页查询店铺信息
@@ -31,7 +31,7 @@ public interface DineStoreService extends IService<DineStore> {
      * @param request 分页请求参数
      * @return 分页结果
      */
-    PageResult<FindDineInfoResponse> pageQuery(@Valid DineStorePageRequest request);
+    PageResult<FindDineStoreResponse> pageQuery(@Valid DineStorePageRequest request);
 
     /**
      * 根据ID查询店铺信息
@@ -47,7 +47,7 @@ public interface DineStoreService extends IService<DineStore> {
      * @param request 店铺信息请求参数
      * @return 创建的店铺信息
      */
-    FindDineInfoResponse create(@Valid DineStoreRequest request);
+    FindDineStoreResponse create(@Valid DineStoreRequest request);
 
     /**
      * 更新店铺信息
@@ -56,7 +56,7 @@ public interface DineStoreService extends IService<DineStore> {
      * @param request 店铺信息请求参数
      * @return 更新后的店铺信息
      */
-    FindDineInfoResponse update(@NotNull Long id, @Valid DineStoreRequest request);
+    FindDineStoreResponse update(@NotNull Long id, @Valid DineStoreRequest request);
 
     /**
      * 删除店铺信息

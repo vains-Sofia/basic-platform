@@ -20,5 +20,5 @@ public class DineDishAttributeOptionRequest {
     private Boolean isAvailable;
 
     @Schema(title = "覆盖价格调整", description = "覆盖价格调整，NULL则使用选项默认值")
-    private Integer priceAdjustmentOverride;
+    private Long priceAdjustmentOverride;
 }

@@ -22,7 +22,7 @@ public class FindDineDishAttributeOptionResponse {
     private Boolean isAvailable;
 
     @Schema(title = "覆盖价格调整", description = "覆盖价格调整，NULL则使用选项默认值")
-    private Integer priceAdjustmentOverride;
+    private Long priceAdjustmentOverride;
 
     @Schema(title = "创建人", description = "创建人用户ID")
     private Long createBy;

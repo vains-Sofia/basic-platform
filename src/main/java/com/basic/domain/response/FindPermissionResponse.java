@@ -61,6 +61,9 @@ public class FindPermissionResponse implements Serializable {
     @Schema(title = "右侧图标", description = "菜单项右侧显示的额外图标")
     private String extraIcon;
 
+    @Schema(title = "菜单排序", description = "菜单排序")
+    private Integer sortOrder;
+
     @Schema(title = "进场动画（页面加载动画）", description = "页面进入时的动画效果配置")
     private String enterTransition;
 
@@ -87,9 +90,6 @@ public class FindPermissionResponse implements Serializable {
 
     @Schema(title = "是否显示父级菜单", description = "控制父级菜单是否在面包屑导航中显示")
     private Boolean showParent;
-
-    @Schema(title = "菜单排序", description = "菜单项在同级菜单中的排序权重，数值越小越靠前")
-    private Integer rank;
 
     @Schema(title = "指定激活菜单即可获得高亮", description = "`activePath`为指定激活菜单的`path`，用于高亮显示当前激活的菜单项")
     private String activePath;

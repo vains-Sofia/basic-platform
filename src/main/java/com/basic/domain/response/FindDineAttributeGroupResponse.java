@@ -1,5 +1,6 @@
 package com.basic.domain.response;
 
+import com.basic.enums.SelectTypeEnum;
 import com.basic.enums.StatusEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -20,7 +21,7 @@ public class FindDineAttributeGroupResponse {
     private String name;
 
     @Schema(title = "选择类型", description = "1-单选 2-多选")
-    private Integer selectType;
+    private SelectTypeEnum selectType;
 
     @Schema(title = "排序", description = "排序")
     private Integer sort;

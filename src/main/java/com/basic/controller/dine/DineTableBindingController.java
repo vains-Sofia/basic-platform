@@ -22,7 +22,7 @@ import java.util.List;
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/order/table/binding")
+@RequestMapping("/table/binding")
 @Tag(name = "点单-桌位绑定 api 接口", description = "桌位绑定相关接口")
 public class DineTableBindingController {
 

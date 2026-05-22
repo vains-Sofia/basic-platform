@@ -18,7 +18,7 @@ public class DineAttributeOptionRequest {
     private String name;
 
     @Schema(title = "价格调整(分)", description = "价格调整(分)，可为负数")
-    private Integer priceAdjustment;
+    private Long priceAdjustment;
 
     @Schema(title = "排序", description = "排序")
     private Integer sort;

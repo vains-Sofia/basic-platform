@@ -22,7 +22,7 @@ import java.util.List;
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/order/dish")
+@RequestMapping("/dish")
 @Tag(name = "点单-菜品 api 接口", description = "菜品相关接口")
 public class DineDishController {
 

@@ -22,7 +22,7 @@ import java.util.List;
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/order/dish/attribute/option")
+@RequestMapping("/dish/attribute/option")
 @Tag(name = "点单-菜品属性选项 api 接口", description = "菜品属性选项相关接口")
 public class DineDishAttributeOptionController {
 
