@@ -75,7 +75,7 @@ public class DineTableInfoServiceImpl extends ServiceImpl<DineTableInfoMapper, D
             Map<Long, String> storeNameMap = dineStoreMapper.selectList(
                             Wrappers.lambdaQuery(DineStore.class).in(DineStore::getId, storeIds))
                     .stream()
-                    .collect(Collectors.toMap(DineStore::getId, DineStore::getName));
+                    .collect(Collectors.toMap(DineStore::getId, DineStore::getName, (k1, k2) -> k2));
             records.forEach(r -> r.setStoreName(storeNameMap.get(r.getStoreId())));
         }
 
