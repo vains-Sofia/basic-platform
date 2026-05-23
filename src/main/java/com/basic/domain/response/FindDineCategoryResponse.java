@@ -16,6 +16,9 @@ public class FindDineCategoryResponse {
     @Schema(title = "所属门店ID", description = "所属门店ID")
     private Long storeId;
 
+    @Schema(title = "所属门店名称", description = "所属门店名称")
+    private String storeName;
+
     @Schema(title = "分类名称", description = "分类名称")
     private String name;
 

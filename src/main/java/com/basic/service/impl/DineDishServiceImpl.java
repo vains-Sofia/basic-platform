@@ -19,6 +19,7 @@ import com.basic.mapper.DineDishAttributeGroupMapper;
 import com.basic.mapper.DineDishAttributeOptionMapper;
 import com.basic.mapper.DineDishMapper;
 import com.basic.service.DineDishService;
+import com.basic.service.FileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -27,7 +28,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 针对表【order_dish(菜品表)】的数据库操作Service实现
@@ -45,6 +49,8 @@ public class DineDishServiceImpl extends ServiceImpl<DineDishMapper, DineDish>
     private final DineDishAttributeGroupMapper dineDishAttributeGroupMapper;
 
     private final DineDishAttributeOptionMapper dineDishAttributeOptionMapper;
+
+    private final FileService fileService;
 
     @Override
     public List<FindDineDishResponse> listAll() {
@@ -74,7 +80,19 @@ public class DineDishServiceImpl extends ServiceImpl<DineDishMapper, DineDish>
             return response;
         });
 
-        return PageResult.of(converted.getCurrent(), converted.getSize(), converted.getTotal(), converted.getRecords());
+        List<FindDineDishResponse> records = converted.getRecords();
+        if (!records.isEmpty()) {
+            Set<Long> categoryIds = records.stream()
+                    .map(FindDineDishResponse::getCategoryId)
+                    .collect(Collectors.toSet());
+            Map<Long, String> categoryNameMap = dineCategoryMapper.selectList(
+                            Wrappers.lambdaQuery(DineCategory.class).in(DineCategory::getId, categoryIds))
+                    .stream()
+                    .collect(Collectors.toMap(DineCategory::getId, DineCategory::getName));
+            records.forEach(r -> r.setCategoryName(categoryNameMap.get(r.getCategoryId())));
+        }
+
+        return PageResult.of(converted.getCurrent(), converted.getSize(), converted.getTotal(), records);
     }
 
     @Override
@@ -100,6 +118,7 @@ public class DineDishServiceImpl extends ServiceImpl<DineDishMapper, DineDish>
                 .orElseThrow(() -> new CloudServiceException("菜品不存在，ID：" + id));
 
         this.validateDish(request, id);
+        this.deleteUnusedImages(request, entity);
         BeanUtils.copyProperties(request, entity);
         this.updateById(entity);
 
@@ -130,6 +149,25 @@ public class DineDishServiceImpl extends ServiceImpl<DineDishMapper, DineDish>
 
         if (log.isDebugEnabled()) {
             log.debug("删除菜品，ID：{}，名称：{}", id, entity.getName());
+        }
+    }
+
+    private void deleteUnusedImages(DineDishRequest request, DineDish entity) {
+        if (!ObjectUtils.isEmpty(entity.getImage()) && !Objects.equals(request.getImage(), entity.getImage())) {
+            boolean usedInImages = !ObjectUtils.isEmpty(request.getImages()) && request.getImages().contains(entity.getImage());
+            if (!usedInImages) {
+                fileService.deleteByFileUrl(entity.getImage());
+            }
+        }
+
+        if (!ObjectUtils.isEmpty(entity.getImages())) {
+            for (String image : entity.getImages()) {
+                boolean usedAsMainImage = Objects.equals(image, request.getImage());
+                boolean usedInImages = !ObjectUtils.isEmpty(request.getImages()) && request.getImages().contains(image);
+                if (!usedAsMainImage && !usedInImages) {
+                    fileService.deleteByFileUrl(image);
+                }
+            }
         }
     }
 

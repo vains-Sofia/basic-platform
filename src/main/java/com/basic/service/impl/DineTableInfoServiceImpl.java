@@ -6,19 +6,25 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.basic.domain.PageResult;
+import com.basic.domain.entity.DineStore;
 import com.basic.domain.entity.DineTableInfo;
 import com.basic.domain.request.DineTableInfoPageRequest;
 import com.basic.domain.request.DineTableInfoRequest;
 import com.basic.domain.response.FindDineTableInfoResponse;
 import com.basic.exception.CloudServiceException;
+import com.basic.mapper.DineStoreMapper;
 import com.basic.mapper.DineTableInfoMapper;
 import com.basic.service.DineTableInfoService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 针对表【order_table_info(桌台表)】的数据库操作Service实现
@@ -27,8 +33,11 @@ import java.util.List;
  */
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class DineTableInfoServiceImpl extends ServiceImpl<DineTableInfoMapper, DineTableInfo>
         implements DineTableInfoService {
+
+    private final DineStoreMapper dineStoreMapper;
 
     @Override
     public List<FindDineTableInfoResponse> listAll() {
@@ -58,7 +67,19 @@ public class DineTableInfoServiceImpl extends ServiceImpl<DineTableInfoMapper, D
             return response;
         });
 
-        return PageResult.of(converted.getCurrent(), converted.getSize(), converted.getTotal(), converted.getRecords());
+        List<FindDineTableInfoResponse> records = converted.getRecords();
+        if (!records.isEmpty()) {
+            Set<Long> storeIds = records.stream()
+                    .map(FindDineTableInfoResponse::getStoreId)
+                    .collect(Collectors.toSet());
+            Map<Long, String> storeNameMap = dineStoreMapper.selectList(
+                            Wrappers.lambdaQuery(DineStore.class).in(DineStore::getId, storeIds))
+                    .stream()
+                    .collect(Collectors.toMap(DineStore::getId, DineStore::getName));
+            records.forEach(r -> r.setStoreName(storeNameMap.get(r.getStoreId())));
+        }
+
+        return PageResult.of(converted.getCurrent(), converted.getSize(), converted.getTotal(), records);
     }
 
     @Override

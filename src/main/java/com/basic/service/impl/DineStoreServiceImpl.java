@@ -13,12 +13,15 @@ import com.basic.domain.response.FindDineStoreResponse;
 import com.basic.exception.CloudServiceException;
 import com.basic.mapper.DineStoreMapper;
 import com.basic.service.DineStoreService;
+import com.basic.service.FileService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -28,8 +31,11 @@ import java.util.Optional;
  */
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class DineStoreServiceImpl extends ServiceImpl<DineStoreMapper, DineStore>
         implements DineStoreService {
+
+    private final FileService fileService;
 
     @Override
     public List<FindDineStoreResponse> listAll() {
@@ -85,6 +91,32 @@ public class DineStoreServiceImpl extends ServiceImpl<DineStoreMapper, DineStore
     public FindDineStoreResponse update(Long id, DineStoreRequest request) {
         DineStore entity = this.getOptById(id)
                 .orElseThrow(() -> new CloudServiceException("店铺信息不存在，ID：" + id));
+
+        // 不修改
+        if (ObjectUtils.isEmpty(request.getLogo())) {
+            request.setLogo(entity.getLogo());
+        } else {
+            // 修改了 Logo，需要移除旧的 Logo
+            if (!Objects.equals(request.getLogo(), entity.getLogo())) {
+                if (!ObjectUtils.isEmpty(entity.getLogo())) {
+                    fileService.deleteByFileUrl(entity.getLogo());
+                }
+            }
+        }
+
+        // 不修改
+        if (ObjectUtils.isEmpty(request.getAlbums())) {
+            request.setAlbums(entity.getAlbums());
+        } else {
+            // 修改了商家相册，需要移除不再使用的旧商家相册
+            if (!Objects.equals(request.getAlbums(), entity.getAlbums()) && !ObjectUtils.isEmpty(entity.getAlbums())) {
+                for (String album : entity.getAlbums()) {
+                    if (!request.getAlbums().contains(album)) {
+                        fileService.deleteByFileUrl(album);
+                    }
+                }
+            }
+        }
 
         BeanUtils.copyProperties(request, entity);
         this.updateById(entity);

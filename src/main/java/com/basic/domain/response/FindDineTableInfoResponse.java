@@ -16,6 +16,9 @@ public class FindDineTableInfoResponse {
     @Schema(title = "所属门店ID", description = "所属门店ID")
     private Long storeId;
 
+    @Schema(title = "所属门店名称", description = "所属门店名称")
+    private String storeName;
+
     @Schema(title = "桌台名称", description = "桌台名称，如'A01'")
     private String name;
 

@@ -1,5 +1,6 @@
 package com.basic.domain.response;
 
+import com.basic.enums.RecommendEnum;
 import com.basic.enums.StatusEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -20,6 +21,9 @@ public class FindDineDishResponse {
     @Schema(title = "所属分类ID", description = "所属分类ID")
     private Long categoryId;
 
+    @Schema(title = "所属分类名称", description = "所属分类名称")
+    private String categoryName;
+
     @Schema(title = "菜品名称", description = "菜品名称")
     private String name;
 
@@ -39,7 +43,7 @@ public class FindDineDishResponse {
     private List<String> labels;
 
     @Schema(title = "是否推荐", description = "0-普通 1-推荐")
-    private Integer recommend;
+    private RecommendEnum recommend;
 
     @Schema(title = "预计制作时长(秒)", description = "预计制作时长(秒)")
     private Integer cookingTime;

@@ -8,12 +8,14 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.basic.domain.PageResult;
 import com.basic.domain.entity.DineCategory;
 import com.basic.domain.entity.DineDish;
+import com.basic.domain.entity.DineStore;
 import com.basic.domain.request.DineCategoryPageRequest;
 import com.basic.domain.request.DineCategoryRequest;
 import com.basic.domain.response.FindDineCategoryResponse;
 import com.basic.exception.CloudServiceException;
 import com.basic.mapper.DineCategoryMapper;
 import com.basic.mapper.DineDishMapper;
+import com.basic.mapper.DineStoreMapper;
 import com.basic.service.DineCategoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +24,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 针对表【order_category(菜品分类表)】的数据库操作Service实现
@@ -35,6 +40,8 @@ public class DineCategoryServiceImpl extends ServiceImpl<DineCategoryMapper, Din
         implements DineCategoryService {
 
     private final DineDishMapper dineDishMapper;
+
+    private final DineStoreMapper dineStoreMapper;
 
     @Override
     public List<FindDineCategoryResponse> listAll() {
@@ -63,7 +70,19 @@ public class DineCategoryServiceImpl extends ServiceImpl<DineCategoryMapper, Din
             return response;
         });
 
-        return PageResult.of(converted.getCurrent(), converted.getSize(), converted.getTotal(), converted.getRecords());
+        List<FindDineCategoryResponse> records = converted.getRecords();
+        if (!records.isEmpty()) {
+            Set<Long> storeIds = records.stream()
+                    .map(FindDineCategoryResponse::getStoreId)
+                    .collect(Collectors.toSet());
+            Map<Long, String> storeNameMap = dineStoreMapper.selectList(
+                            Wrappers.lambdaQuery(DineStore.class).in(DineStore::getId, storeIds))
+                    .stream()
+                    .collect(Collectors.toMap(DineStore::getId, DineStore::getName));
+            records.forEach(r -> r.setStoreName(storeNameMap.get(r.getStoreId())));
+        }
+
+        return PageResult.of(converted.getCurrent(), converted.getSize(), converted.getTotal(), records);
     }
 
     @Override
