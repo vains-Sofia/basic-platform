@@ -22,6 +22,9 @@ springdoc:
     operations-sorter: alpha
 server:
   port: 10000
+  tomcat:
+    remoteip:
+      protocol-header: X-Forwarded-Proto
 
 # Mybatis Plus相关配置
 mybatis-plus:
