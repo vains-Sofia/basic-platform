@@ -38,7 +38,7 @@ basic:
       allowed-origins:
         - http://localhost:5173
         - http://127.0.0.1:5173
-        - http://web.vains.ddns-ip.net:20000
+        - http://web.vains.eu.cc
 
     security:
       token:
