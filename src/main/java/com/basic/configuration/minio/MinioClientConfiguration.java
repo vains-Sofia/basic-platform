@@ -20,6 +20,8 @@ public class MinioClientConfiguration {
 
     private final StorageProperty storageProperty;
 
+    private final MinioProxyEndpointResolver minioProxyEndpointResolver;
+
     /**
      * 将MinIO Client注册为Bean
      *
@@ -50,7 +52,7 @@ public class MinioClientConfiguration {
         asyncClientBuilder.endpoint(storageProperty.getEndpoint());
         asyncClientBuilder.credentials(storageProperty.getAccessKey(), storageProperty.getSecretKey());
         MinioAsyncClient minioAsyncClient = asyncClientBuilder.build();
-        return new MutableMinioAsyncClient(minioAsyncClient, storageProperty.getProxyEndpoint());
+        return new MutableMinioAsyncClient(minioAsyncClient, minioProxyEndpointResolver::resolve);
     }
 
 }

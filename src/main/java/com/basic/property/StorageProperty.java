@@ -4,6 +4,8 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 /**
  * 文件存储服务配置
  *
@@ -43,4 +45,9 @@ public class StorageProperty {
      * 如果有代理服务器，则需要配置代理服务器的地址，这样签名后才能使用代理服务器的地址访问
      */
     private String proxyEndpoint;
+
+    /**
+     * 按请求域名匹配的 MinIO 对外访问地址，未匹配时使用 proxyEndpoint。
+     */
+    private Map<String, String> proxyEndpoints = Map.of();
 }

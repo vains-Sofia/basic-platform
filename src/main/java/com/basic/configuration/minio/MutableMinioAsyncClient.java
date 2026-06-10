@@ -8,6 +8,7 @@ import io.minio.errors.MinioException;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.concurrent.CompletionException;
+import java.util.function.Supplier;
 
 /**
  * 可变端点的 Minio异步客户端
@@ -17,11 +18,11 @@ import java.util.concurrent.CompletionException;
 public class MutableMinioAsyncClient extends MinioAsyncClient {
 
     // 代理端点
-    private final String proxyEndpoint;
+    private final Supplier<String> proxyEndpointSupplier;
 
-    protected MutableMinioAsyncClient(MinioAsyncClient client, String proxyEndpoint) {
+    protected MutableMinioAsyncClient(MinioAsyncClient client, Supplier<String> proxyEndpointSupplier) {
         super(client);
-        this.proxyEndpoint = proxyEndpoint;
+        this.proxyEndpointSupplier = proxyEndpointSupplier;
     }
 
     @Override
@@ -47,6 +48,7 @@ public class MutableMinioAsyncClient extends MinioAsyncClient {
 
         Http.BaseUrl proxyBaseUrl;
         // 重点：修改url
+        String proxyEndpoint = proxyEndpointSupplier == null ? null : proxyEndpointSupplier.get();
         if (StringUtils.isNotBlank(proxyEndpoint)) {
             if (proxyEndpoint.endsWith("/")) {
                 proxyBaseUrl = new Http.BaseUrl(proxyEndpoint);

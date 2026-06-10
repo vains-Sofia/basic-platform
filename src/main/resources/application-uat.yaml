@@ -58,3 +58,6 @@ basic:
       access-key: ${MINIO_ACCESS_KEY}
       secret-key: ${MINIO_SECRET_KEY}
       proxy-endpoint: http://minio.vains.ddns-ip.net:20000/
+      proxy-endpoints:
+        web.vains.eu.cc: ${MINIO_PROXY_ENDPOINT_CLOUDFLARE:https://minio.vains.eu.cc/}
+        v6-web.vains.eu.cc: ${MINIO_PROXY_ENDPOINT_DIRECT:http://v6-minio.vains.eu.cc:20000/}

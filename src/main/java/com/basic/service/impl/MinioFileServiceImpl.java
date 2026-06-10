@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * 文件相关操作 MinIO 实现
@@ -99,26 +100,16 @@ public class MinioFileServiceImpl implements FileService {
         }
 
         try {
-            // 1. 解析URL
-            URI uri = new URI(fileUrl);
-            // 截取路径部分：/桶名/对象路径
-            String path = uri.getPath();
-            // 分割路径（示例：/user-avatar/a/b.png → [, user-avatar, a, b.png]）
-            String[] pathParts = path.split("/", 3);
-
-            if (pathParts.length < 3) {
+            MinioObject minioObject = parseMinioObject(fileUrl);
+            if (minioObject == null) {
                 return;
             }
 
-            // 2. 提取桶名 + 对象名
-            String bucketName = pathParts[1];
-            String objectName = pathParts[2];
-
-            // 3. 调用MinIO删除旧文件
+            // 调用MinIO删除旧文件
             minioClient.removeObject(
                     RemoveObjectArgs.builder()
-                            .bucket(bucketName)
-                            .object(objectName)
+                            .bucket(minioObject.bucketName())
+                            .object(minioObject.objectName())
                             .build()
             );
 
@@ -127,5 +118,78 @@ public class MinioFileServiceImpl implements FileService {
             // 删除失败不影响主流程（打印日志即可）
             log.warn("文件【{}】删除失败, 原因: {}", fileUrl, e.getMessage());
         }
+    }
+
+    /**
+     * 兼容历史完整 URL 以及当前去掉 MinIO base url 后的相对路径。
+     */
+    private MinioObject parseMinioObject(String fileUrl) {
+        String path = fileUrl.trim();
+        path = removeConfiguredBaseUrl(path, storageProperty.getProxyEndpoint());
+        if (!ObjectUtils.isEmpty(storageProperty.getProxyEndpoints())) {
+            for (String proxyEndpoint : storageProperty.getProxyEndpoints().values()) {
+                path = removeConfiguredBaseUrl(path, proxyEndpoint);
+            }
+        }
+        path = removeConfiguredBaseUrl(path, storageProperty.getEndpoint());
+        path = extractPath(path);
+
+        if (ObjectUtils.isEmpty(path)) {
+            return null;
+        }
+
+        while (path.startsWith("/")) {
+            path = path.substring(1);
+        }
+
+        int separatorIndex = path.indexOf("/");
+        if (separatorIndex <= 0 || separatorIndex == path.length() - 1) {
+            return null;
+        }
+
+        String bucketName = path.substring(0, separatorIndex);
+        String objectName = path.substring(separatorIndex + 1);
+        if (ObjectUtils.isEmpty(bucketName) || ObjectUtils.isEmpty(objectName)) {
+            return null;
+        }
+
+        return new MinioObject(bucketName, objectName);
+    }
+
+    private String removeConfiguredBaseUrl(String fileUrl, String baseUrl) {
+        if (ObjectUtils.isEmpty(fileUrl) || ObjectUtils.isEmpty(baseUrl)) {
+            return fileUrl;
+        }
+
+        String normalizedBaseUrl = baseUrl.endsWith("/") ? baseUrl : baseUrl + "/";
+        if (fileUrl.startsWith(normalizedBaseUrl)) {
+            return fileUrl.substring(normalizedBaseUrl.length());
+        }
+        if (fileUrl.equals(baseUrl)) {
+            return "";
+        }
+        return fileUrl;
+    }
+
+    private String extractPath(String fileUrl) {
+        try {
+            URI uri = new URI(fileUrl);
+            String path = uri.getPath();
+            return path == null ? "" : path;
+        } catch (URISyntaxException e) {
+            int queryIndex = fileUrl.indexOf("?");
+            int fragmentIndex = fileUrl.indexOf("#");
+            int endIndex = fileUrl.length();
+            if (queryIndex >= 0) {
+                endIndex = queryIndex;
+            }
+            if (fragmentIndex >= 0) {
+                endIndex = Math.min(endIndex, fragmentIndex);
+            }
+            return fileUrl.substring(0, endIndex);
+        }
+    }
+
+    private record MinioObject(String bucketName, String objectName) {
     }
 }
