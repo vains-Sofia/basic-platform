@@ -39,6 +39,7 @@ basic:
         - http://localhost:5173
         - http://127.0.0.1:5173
         - https://web.vains.eu.cc
+        - http://v6-web.vains.eu.cc:20000
 
     security:
       token:
